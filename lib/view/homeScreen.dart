@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('اجاریکا'),
+        title: Text('اجاریکا', style: TextStyle(color: AppColors.white),),
         backgroundColor: AppColors.primary,
       ),
       body: ListView.builder(
