@@ -1,5 +1,5 @@
-name: ejarika
-description: "A new Flutter project."
+name: Ejarika
+description: "Why buy when you can rent? A smart and secure platform for renting and lending items effortlessly."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter_native_splash: ^2.4.0
   flutter:
     sdk: flutter
 
@@ -87,3 +88,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  color: "#42a5f5"
+  android_12:

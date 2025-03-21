@@ -1,11 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- تم اصلی اپلیکیشن -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
-    </style>
-
-    <!-- تم جدید برای صفحه Splash -->
-    <style name="LaunchTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background</item> <!-- تغییر به تصویر یا رنگ دلخواه -->
     </style>
 </resources>
