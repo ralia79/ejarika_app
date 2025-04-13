@@ -1,8 +1,8 @@
+import 'package:Ejarika/services/ad_service.dart';
+import 'package:flutter/material.dart';
 import 'package:Ejarika/models/item.dart';
-import 'package:Ejarika/utils/colors.dart';
 import 'package:Ejarika/widgets/item_card.dart';
 import 'package:Ejarika/widgets/search_header.dart';
-import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,86 +12,41 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Item> allItems = [
-    Item(
-      id: '1',
-      name: 'بخاری گازی نیک کالا',
-      description: 'با گارانتی و خدمات پس از فروش',
-      imageUrl: 'fill later',
-      price: '8,000,000 تومان',
-    ),
-    Item(
-      id: '2',
-      name: 'اجاره ویلا (استخردار)',
-      description: 'ویلا با تمام امکانات در کردان',
-      imageUrl: 'fill later',
-      price: '1,500,000 تومان',
-    ),
-    Item(
-      id: '3',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-    Item(
-      id: '4',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-    Item(
-      id: '5',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-    Item(
-      id: '6',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-    Item(
-      id: '7',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-    Item(
-      id: '8',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-    Item(
-      id: '9',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-    Item(
-      id: '10',
-      name: 'سامسونگ Galaxy J5 (2017)',
-      description: 'در حد نو، با کارتن و لوازم',
-      imageUrl: 'fill later',
-      price: '3,000,000 تومان',
-    ),
-  ];
-
   List<Item> filteredItems = [];
+  List<Item> allItems = [];
   String selectedCity = 'مشهد';
+  final AdService adService = AdService();
+  bool fetchingData = true;
+  bool hasError = false;
 
   @override
   void initState() {
     super.initState();
-    filteredItems = allItems;
+    _loadItems();
+  }
+
+  Future<void> _loadItems() async {
+    setState(() {
+      fetchingData = true;
+    });
+    try {
+      List<Item> items = await adService.fetchItems();
+      setState(() {
+        allItems = items;
+        filteredItems = items;
+        hasError = false;
+      });
+    } catch (e) {
+      setState(() {
+        hasError = true;
+      });
+      print('Failed to load items: $e');
+    } finally {
+      print('done');
+      setState(() {
+        fetchingData = false;
+      });
+    }
   }
 
   void _filterItems(String query) {
@@ -123,12 +78,40 @@ class _HomeScreenState extends State<HomeScreen> {
               selectedCity: selectedCity,
               onCityChanged: _changeCity,
             ),
+            if (hasError)
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('خطایی پیش آمده است !'),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    OutlinedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5)),
+                        ),
+                        onPressed: _loadItems,
+                        child: fetchingData
+                            ? SizedBox(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                ),
+                                height: 10,
+                                width: 10,
+                              )
+                            : Text('دوباره تلاش کنید'))
+                  ],
+                ),
+              ),
             Expanded(
               child: ListView.builder(
                 itemCount: filteredItems.length,
                 itemBuilder: (ctx, index) {
                   final item = filteredItems[index];
-                  return ItemCard(item: item); // استفاده از ویجت جدید
+                  return ItemCard(item: item);
                 },
               ),
             ),
