@@ -27,11 +27,15 @@ class _BottomNavigationState extends State<BottomNavigation> {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: 'خانه',
+          label: 'آگهی ها',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'جستجو',
+          icon: Icon(Icons.add_circle),
+          label: 'آگهی جدید',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat_bubble_rounded),
+          label: 'گفتگو ها',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),

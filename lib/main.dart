@@ -51,15 +51,18 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int _selectedIndex = 0;
 
   final List<String> _routes = [
-    Routes.home, // مسیر صفحه اصلی
-    '/search', // مسیر صفحه جستجو (فرضی)
-    '/profile', // مسیر صفحه پروفایل (فرضی)
+    Routes.home,
+    Routes.createAd,
+    Routes.chats,
+    Routes.profile
   ];
 
   void _onItemTapped(int index) {
+    print(index);
     setState(() {
       _selectedIndex = index;
     });
+    print(_routes[index]);
     _navigatorKey.currentState?.pushReplacementNamed(_routes[index]);
   }
 
