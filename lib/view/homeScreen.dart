@@ -1,4 +1,5 @@
 import 'package:Ejarika/models/item.dart';
+import 'package:Ejarika/utils/colors.dart';
 import 'package:Ejarika/widgets/item_card.dart';
 import 'package:Ejarika/widgets/search_header.dart';
 import 'package:flutter/material.dart';
