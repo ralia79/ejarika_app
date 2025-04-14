@@ -58,11 +58,9 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   ];
 
   void _onItemTapped(int index) {
-    print(index);
     setState(() {
       _selectedIndex = index;
     });
-    print(_routes[index]);
     _navigatorKey.currentState?.pushReplacementNamed(_routes[index]);
   }
 
