@@ -15,10 +15,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    widget.onTabSelected(index);
+    if (index != _selectedIndex) {
+      setState(() {
+        _selectedIndex = index;
+      });
+      widget.onTabSelected(index);
+    }
   }
 
   @override
