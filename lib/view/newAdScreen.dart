@@ -14,6 +14,8 @@ class _NewAdScreenState extends State<NewAdScreen> {
   String? _category;
   String? _title;
   String? _description;
+  bool? callAccess = false;
+  bool? chatAccess = false;
   final ImagePicker _picker = ImagePicker();
   List<File> _images = [];
 
@@ -67,132 +69,163 @@ class _NewAdScreenState extends State<NewAdScreen> {
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // دسته‌بندی
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: 'دسته‌بندی',
-                    border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  value: _category,
-                  items: _categories.map((String category) {
-                    return DropdownMenuItem<String>(
-                      value: category,
-                      child: Text(category),
-                    );
-                  }).toList(),
-                  onChanged: (value) => setState(() => _category = value),
-                  validator: (value) =>
-                      value == null ? 'لطفاً یک دسته‌بندی انتخاب کنید' : null,
-                ),
-                SizedBox(height: 16),
-
-                // عنوان
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'عنوان',
-                    border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'لطفاً عنوان را وارد کنید'
-                      : null,
-                  onSaved: (value) => _title = value,
-                ),
-                SizedBox(height: 16),
-
-                // توضیحات
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'توضیحات',
-                    border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  maxLines: 5,
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'لطفاً توضیحات را وارد کنید'
-                      : null,
-                  onSaved: (value) => _description = value,
-                ),
-                SizedBox(height: 24),
-
-                // عکس آگهی
-                Text(
-                  'عکس آگهی',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ..._images.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final imageFile = entry.value;
-                      return Stack(
-                        children: [
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.redAccent),
-                              borderRadius: BorderRadius.circular(8),
-                              image: DecorationImage(
-                                image: FileImage(imageFile),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            child: GestureDetector(
-                              onTap: () => _removeImage(index),
-                              child: Container(
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: 'دسته‌بندی',
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                      value: _category,
+                      items: _categories.map((String category) {
+                        return DropdownMenuItem<String>(
+                          value: category,
+                          child: Text(category),
+                        );
+                      }).toList(),
+                      onChanged: (value) => setState(() => _category = value),
+                      validator: (value) => value == null
+                          ? 'لطفاً یک دسته‌بندی انتخاب کنید'
+                          : null,
+                    ),
+                    SizedBox(height: 16),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'عنوان',
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'لطفاً عنوان را وارد کنید'
+                          : null,
+                      onSaved: (value) => _title = value,
+                    ),
+                    SizedBox(height: 16),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'توضیحات',
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                      maxLines: 5,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'لطفاً توضیحات را وارد کنید'
+                          : null,
+                      onSaved: (value) => _description = value,
+                    ),
+                    SizedBox(height: 24),
+                    Text(
+                      'عکس آگهی',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        ..._images.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final imageFile = entry.value;
+                          return Stack(
+                            children: [
+                              Container(
+                                width: 100,
+                                height: 100,
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.redAccent),
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: DecorationImage(
+                                    image: FileImage(imageFile),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                padding: EdgeInsets.all(4),
-                                child: Icon(Icons.delete,
-                                    color: Colors.white, size: 20),
+                              ),
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                child: GestureDetector(
+                                  onTap: () => _removeImage(index),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.6),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    padding: EdgeInsets.all(4),
+                                    child: Icon(Icons.delete,
+                                        color: Colors.white, size: 20),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                        if (_images.length < 8)
+                          GestureDetector(
+                            onTap: _pickImage,
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: Icon(Icons.add,
+                                    size: 32, color: Colors.grey),
                               ),
                             ),
                           ),
-                        ],
-                      );
-                    }).toList(),
-                    if (_images.length < 8)
-                      GestureDetector(
-                        onTap: _pickImage,
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child:
-                                Icon(Icons.add, size: 32, color: Colors.grey),
-                          ),
-                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'تعداد عکس‌های انتخاب شده نباید بیشتر از ۸ باشد.\nویرایش عکس‌ها فقط تا ۳ روز پس از انتشار ممکن است.',
+                      style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                    ),
+                    SizedBox(height: 24),
+                    CheckboxListTile(
+                      title: Text('امکان چت فعال باشد'),
+                      contentPadding: EdgeInsets.zero,
+                      checkColor: AppColors.white,
+                      activeColor: AppColors.primary,
+                      value: chatAccess,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (newValue) {
+                        setState(() {
+                          chatAccess = newValue;
+                        });
+                      },
+                    ),
+                    CheckboxListTile(
+                      title: Text('تماس تلفنی'),
+                      contentPadding: EdgeInsets.zero,
+                      checkColor: AppColors.white,
+                      activeColor: AppColors.primary,
+                      value: callAccess,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (newValue) {
+                        setState(() {
+                          callAccess = newValue;
+                        });
+                      },
+                    ),
+                    if (callAccess ?? false)
+                      Padding(
+                        padding: EdgeInsets.only(right: 20),
+                        child: Text('شماره ی شما روی اجاریکا نمایش داده میشود'),
                       ),
                   ],
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'تعداد عکس‌های انتخاب شده نباید بیشتر از ۸ باشد.\nویرایش عکس‌ها فقط تا ۳ روز پس از انتشار ممکن است.',
-                  style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                SizedBox(
+                  height: 100,
                 ),
-                SizedBox(height: 24),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
