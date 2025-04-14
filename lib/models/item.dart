@@ -1,25 +1,32 @@
+import 'dart:ffi';
+
 class Item {
-  final String id;
-  final String name;
+  final int id;
+  final String title;
   final String description;
   final String imageUrl;
-  final String price;
+  final double price;
+  final String createdAt;
+  final String updatedAt;
 
-  Item({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.price,
-  });
+  Item(
+      {required this.id,
+      required this.title,
+      required this.description,
+      required this.imageUrl,
+      required this.price,
+      required this.createdAt,
+      required this.updatedAt});
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       id: json['id'],
-      name: json['name'],
+      title: json['title'],
       description: json['description'],
-      imageUrl: json['imageUrl'],
+      imageUrl: json['imageUrl'] ?? '',
       price: json['price'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 }

@@ -11,10 +11,12 @@ class AdService {
       final response = await http.get(Uri.parse(apiUrl));
 
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
+        final decodedBody = utf8.decode(response.bodyBytes);
+        List<dynamic> data = json.decode(decodedBody);
         return data.map((item) => Item.fromJson(item)).toList();
       } else {
-        throw Exception('Failed to load items');
+        throw Exception(
+            'Failed to load items - status code: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Failed to load items: $e');

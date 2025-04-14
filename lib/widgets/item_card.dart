@@ -1,5 +1,6 @@
 // widgets/item_card.dart
 import 'package:Ejarika/models/item.dart';
+import 'package:Ejarika/utils/formatter.dart';
 import 'package:flutter/material.dart';
 
 class ItemCard extends StatelessWidget {
@@ -33,7 +34,7 @@ class ItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.name,
+                      item.title,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -52,7 +53,7 @@ class ItemCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      item.price,
+                      formatToToman(item.price),
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

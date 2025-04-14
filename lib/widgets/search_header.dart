@@ -15,53 +15,55 @@ class SearchHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
+        padding: EdgeInsets.only(top: 10, left: 0, right: 0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(5),
+                        bottomRight: Radius.circular(5)),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12, right: 12),
+                    child: TextField(
+                      onChanged: onSearch,
+                      decoration: const InputDecoration(
+                        hintText: 'جستجو در همه آگهی‌ها',
+                        border: InputBorder.none,
+                        suffixIcon: Icon(Icons.search),
+                        contentPadding: EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  )),
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(5),
-                      bottomRight: Radius.circular(5)),
+                      topLeft: Radius.circular(5),
+                      bottomLeft: Radius.circular(5)),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.only(left: 12, right: 12),
-                  child: TextField(
-                    onChanged: onSearch,
-                    decoration: const InputDecoration(
-                      hintText: 'جستجو در همه آگهی‌ها',
-                      border: InputBorder.none,
-                      suffixIcon: Icon(Icons.search),
-                      contentPadding: EdgeInsets.symmetric(vertical: 14),
-                    ),
+                  padding: EdgeInsets.only(left: 12, right: 10),
+                  child: DropdownButton<String>(
+                    value: selectedCity,
+                    underline: const SizedBox(),
+                    items: ['مشهد', 'تهران', 'اصفهان'].map((String city) {
+                      return DropdownMenuItem<String>(
+                        value: city,
+                        child: Text(city),
+                      );
+                    }).toList(),
+                    onChanged: onCityChanged,
                   ),
                 )),
-          ),
-          Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    bottomLeft: Radius.circular(5)),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(left: 12),
-                child: DropdownButton<String>(
-                  value: selectedCity,
-                  underline: const SizedBox(),
-                  items: ['مشهد', 'تهران', 'اصفهان'].map((String city) {
-                    return DropdownMenuItem<String>(
-                      value: city,
-                      child: Text(city),
-                    );
-                  }).toList(),
-                  onChanged: onCityChanged,
-                ),
-              )),
-        ],
-      ),
-    );
+          ],
+        ));
   }
 }

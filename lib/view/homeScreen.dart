@@ -1,4 +1,5 @@
 import 'package:Ejarika/services/ad_service.dart';
+import 'package:Ejarika/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:Ejarika/models/item.dart';
 import 'package:Ejarika/widgets/item_card.dart';
@@ -42,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       print('Failed to load items: $e');
     } finally {
-      print('done');
       setState(() {
         fetchingData = false;
       });
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       filteredItems = allItems
           .where((item) =>
-              item.name.contains(query) || item.description.contains(query))
+              item.title.contains(query) || item.description.contains(query))
           .toList();
     });
   }
@@ -69,15 +69,22 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(80),
+        child: AppBar(
+            backgroundColor: AppColors.primary,
+            title: Expanded(
+              child: SearchHeader(
+                onSearch: _filterItems,
+                selectedCity: selectedCity,
+                onCityChanged: _changeCity,
+              ),
+            )),
+      ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.only(top: 10),
         child: Column(
           children: [
-            SearchHeader(
-              onSearch: _filterItems,
-              selectedCity: selectedCity,
-              onCityChanged: _changeCity,
-            ),
             if (hasError)
               Expanded(
                 child: Column(
