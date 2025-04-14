@@ -19,11 +19,28 @@ class _HomeScreenState extends State<HomeScreen> {
   final AdService adService = AdService();
   bool fetchingData = true;
   bool hasError = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _loadItems();
+    _setupScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _setupScrollController() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.minScrollExtent) {
+        _loadItems();
+      }
+    });
   }
 
   Future<void> _loadItems() async {
@@ -72,19 +89,29 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: AppBar(
-            backgroundColor: AppColors.primary,
-            title: Expanded(
-              child: SearchHeader(
-                onSearch: _filterItems,
-                selectedCity: selectedCity,
-                onCityChanged: _changeCity,
-              ),
-            )),
+          backgroundColor: AppColors.primary,
+          title: Expanded(
+            child: SearchHeader(
+              onSearch: _filterItems,
+              selectedCity: selectedCity,
+              onCityChanged: _changeCity,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Column(
           children: [
+            if (fetchingData && !hasError)
+              SizedBox(
+                child: CircularProgressIndicator(
+                  color: AppColors.secondary,
+                  strokeWidth: 1,
+                ),
+                height: 20,
+                width: 20,
+              ),
             if (hasError)
               Expanded(
                 child: Column(
@@ -92,34 +119,38 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text('خطایی پیش آمده است !'),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     OutlinedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                        ),
-                        onPressed: _loadItems,
-                        child: fetchingData
-                            ? SizedBox(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 1,
-                                ),
-                                height: 10,
-                                width: 10,
-                              )
-                            : Text('دوباره تلاش کنید'))
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                      ),
+                      onPressed: _loadItems,
+                      child: fetchingData
+                          ? SizedBox(
+                              child: CircularProgressIndicator(strokeWidth: 1),
+                              height: 10,
+                              width: 10,
+                            )
+                          : Text('دوباره تلاش کنید'),
+                    ),
                   ],
                 ),
               ),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredItems.length,
-                itemBuilder: (ctx, index) {
-                  final item = filteredItems[index];
-                  return ItemCard(item: item);
-                },
+              child: RefreshIndicator(
+                // اضافه شد
+                onRefresh: _loadItems,
+                color: AppColors.primary,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: filteredItems.length,
+                  itemBuilder: (ctx, index) {
+                    final item = filteredItems[index];
+                    return ItemCard(item: item);
+                  },
+                ),
               ),
             ),
           ],
