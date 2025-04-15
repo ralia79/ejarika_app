@@ -90,12 +90,10 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: Size.fromHeight(80),
         child: AppBar(
           backgroundColor: AppColors.primary,
-          title: Expanded(
-            child: SearchHeader(
-              onSearch: _filterItems,
-              selectedCity: selectedCity,
-              onCityChanged: _changeCity,
-            ),
+          title: SearchHeader(
+            onSearch: _filterItems,
+            selectedCity: selectedCity,
+            onCityChanged: _changeCity,
           ),
         ),
       ),
