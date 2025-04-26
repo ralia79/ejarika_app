@@ -1,5 +1,5 @@
-import 'package:Ejarika/services/ad_service.dart';
 import 'package:flutter/material.dart';
+import 'package:Ejarika/services/ad_service.dart';
 import '../models/item.dart';
 import '../utils/colors.dart';
 
@@ -15,7 +15,6 @@ class AdScreen extends StatefulWidget {
 class _AdScreenState extends State<AdScreen> {
   late Future<Item> _adDataFuture;
   final AdService _adService = AdService();
-  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -23,50 +22,61 @@ class _AdScreenState extends State<AdScreen> {
     _loadAdData();
   }
 
-  Future<void> _loadAdData() async {
-    setState(() => _isRefreshing = true);
-    try {
+  void _loadAdData() {
+    setState(() {
       _adDataFuture = _adService.findItem(widget.adId);
-      await _adDataFuture;
-      print(_adDataFuture);
-    } finally {
-      if (mounted) {
-        setState(() => _isRefreshing = false);
-      }
-    }
+    });
   }
 
-  Widget _buildErrorWidget(String message, {VoidCallback? onRetry}) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            message,
-            style: const TextStyle(fontSize: 16, color: Colors.black),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          if (onRetry != null)
-            ElevatedButton(
-              onPressed: onRetry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-              ),
-              child: const Text('تلاش مجدد',
-                  style: TextStyle(color: Colors.white)),
-            ),
-        ],
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0,
+      ),
+      body: FutureBuilder<Item>(
+        future: _adDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return _ErrorWidget(
+              message: "مشکلی در بارگذاری اطلاعات پیش آمد.\n${snapshot.error}",
+              onRetry: _loadAdData,
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data == null) {
+            return _ErrorWidget(
+              message: "آگهی مورد نظر یافت نشد",
+              onRetry: _loadAdData,
+            );
+          }
+
+          final item = snapshot.data!;
+          return _AdContent(item: item);
+        },
       ),
     );
   }
+}
 
-  Widget _buildAdContent(Item item) {
+class _AdContent extends StatelessWidget {
+  final Item item;
+
+  const _AdContent({Key? key, required this.item}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         // Image Section
         Image.network(
-          item.mainImage,
+          item.images.isNotEmpty ? item.images[0] : '',
           width: double.infinity,
           height: 250,
           fit: BoxFit.cover,
@@ -85,7 +95,6 @@ class _AdScreenState extends State<AdScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title and Location
                 Text(
                   item.title,
                   style: const TextStyle(
@@ -94,22 +103,13 @@ class _AdScreenState extends State<AdScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  "لحظاتی پیش در مشهد، شهرک شهید رجایی",
+                Text(
+                  item.address,
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const Divider(color: AppColors.primary, thickness: 1),
-
-                // Exchange Info
-                _buildDetailRow(
-                  title: "مایل به معاوضه",
-                  value: "نیستم",
-                  valueColor: AppColors.secondary,
-                ),
                 const SizedBox(height: 12),
-
-                // Price
-                _buildDetailRow(
+                _DetailRow(
                   title: "قیمت",
                   value: _formatPrice(item.price),
                   valueStyle: const TextStyle(
@@ -117,9 +117,7 @@ class _AdScreenState extends State<AdScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Description
+                const SizedBox(height: 30),
                 const Text(
                   "توضیحات",
                   style: TextStyle(
@@ -141,38 +139,68 @@ class _AdScreenState extends State<AdScreen> {
         ),
 
         // Action Buttons
-        _buildActionButtons(),
+        _ActionButtons(),
       ],
     );
   }
 
-  Widget _buildDetailRow({
-    required String title,
-    required String value,
-    Color? valueColor,
-    TextStyle? valueStyle,
-  }) {
+  String _formatPrice(double price) {
+    return "${price.toStringAsFixed(0).replaceAllMapped(
+          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+          (match) => '${match[1]},',
+        )} تومان";
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String title;
+  final String value;
+  final TextStyle? valueStyle;
+
+  const _DetailRow({
+    Key? key,
+    required this.title,
+    required this.value,
+    this.valueStyle,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: const TextStyle(fontSize: 15)),
         Text(
           value,
-          style: valueStyle?.copyWith(color: valueColor) ??
-              TextStyle(fontSize: 15, color: valueColor),
+          style: valueStyle ?? const TextStyle(fontSize: 15),
         ),
       ],
     );
   }
+}
 
-  Widget _buildActionButtons() {
+class _ActionButtons extends StatelessWidget {
+  const _ActionButtons({Key? key}) : super(key: key);
+
+  void _showContactInfo() {
+    // Implement contact info logic
+    print('Showing contact info');
+  }
+
+  void _startChat() {
+    // Implement chat logic
+    print('Starting chat');
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () => _showContactInfo(),
+              onPressed: _showContactInfo,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
@@ -189,7 +217,7 @@ class _AdScreenState extends State<AdScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton(
-              onPressed: () => _startChat(),
+              onPressed: _startChat,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
@@ -207,62 +235,42 @@ class _AdScreenState extends State<AdScreen> {
       ),
     );
   }
+}
 
-  String _formatPrice(double price) {
-    return "${price.toStringAsFixed(0).replaceAllMapped(
-          RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-          (match) => '${match[1]},',
-        )} تومان";
-  }
+class _ErrorWidget extends StatelessWidget {
+  final String message;
+  final VoidCallback? onRetry;
 
-  void _showContactInfo() {
-    // Implement contact info logic
-    print('Showing contact info');
-  }
-
-  void _startChat() {
-    // Implement chat logic
-    print('Starting chat');
-  }
+  const _ErrorWidget({Key? key, required this.message, this.onRetry})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        iconTheme: const IconThemeData(color: Colors.white),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _isRefreshing ? null : _loadAdData,
-          ),
-        ],
-      ),
-      body: FutureBuilder<Item>(
-        future: _adDataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting &&
-              !_isRefreshing) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return _buildErrorWidget(
-              "مشکلی در بارگذاری اطلاعات پیش آمد.\n${snapshot.error}",
-              onRetry: _loadAdData,
-            );
-          }
-
-          if (!snapshot.hasData) {
-            return _buildErrorWidget(
-              "آگهی مورد نظر یافت نشد",
-              onRetry: _loadAdData,
-            );
-          }
-
-          return _buildAdContent(snapshot.data!);
-        },
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message,
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            if (onRetry != null)
+              ElevatedButton(
+                onPressed: onRetry,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                ),
+                child: const Text(
+                  'تلاش مجدد',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

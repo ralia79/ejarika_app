@@ -70,7 +70,7 @@ class ItemCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
-                      item.mainImage,
+                      item.images.isNotEmpty ? item.images[0] : '',
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,

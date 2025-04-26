@@ -138,7 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             Expanded(
               child: RefreshIndicator(
-                // اضافه شد
                 onRefresh: _loadItems,
                 color: AppColors.primary,
                 child: ListView.builder(
