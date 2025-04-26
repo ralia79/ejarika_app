@@ -22,4 +22,40 @@ class AdService {
       throw Exception('Failed to load items: $e');
     }
   }
+
+  Future<Item> findItem(itemId) async {
+    try {
+      final response = await http.get(Uri.parse(apiUrl + '/' + itemId));
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final jsonData = json.decode(decodedBody) as Map<String, dynamic>;
+
+        return Item.fromJson(jsonData);
+      } else {
+        throw Exception(
+            'Failed to load items - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load items: $e');
+    }
+  }
+
+  Future<Item> createAd(ad) async {
+    try {
+      final response = await http.post(Uri.parse(apiUrl), body: ad);
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final jsonData = json.decode(decodedBody) as Map<String, dynamic>;
+
+        return Item.fromJson(jsonData);
+      } else {
+        throw Exception(
+            'Failed to load items - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load items: $e');
+    }
+  }
 }

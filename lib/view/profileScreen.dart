@@ -2,6 +2,7 @@ import 'package:Ejarika/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class Profilescreen extends StatelessWidget {
+  final bool isLogined = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,12 +15,19 @@ class Profilescreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView(
-              children: const [
-                ListTile(
-                  leading: Icon(Icons.account_circle),
-                  title: Text('حساب کاربری'),
-                  subtitle: Text('کاربر فعلی: 09123456789'),
-                ),
+              children: [
+                if (isLogined)
+                  ListTile(
+                    leading: Icon(Icons.account_circle),
+                    title: Text('حساب کاربری'),
+                    subtitle: Text('کاربر فعلی: 09123456789'),
+                  )
+                else
+                  ListTile(
+                    leading: Icon(Icons.login),
+                    title: Text(
+                        'برای استفاده از تمامی قابلیت‌های اجاریکا وارد شوید'),
+                  ),
                 Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   child: Divider(color: Colors.grey),
