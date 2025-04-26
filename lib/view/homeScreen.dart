@@ -49,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     try {
       List<Item> items = await adService.fetchItems();
+      print(items);
       setState(() {
         allItems = items;
         filteredItems = items;

@@ -8,7 +8,7 @@ class AdService {
 
   Future<List<Item>> fetchItems() async {
     try {
-      final response = await http.get(Uri.parse(apiUrl));
+      final response = await http.get(Uri.parse(apiUrl + '?cityId=1'));
 
       if (response.statusCode == 200) {
         final decodedBody = utf8.decode(response.bodyBytes);

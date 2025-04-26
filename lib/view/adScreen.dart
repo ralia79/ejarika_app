@@ -66,7 +66,7 @@ class _AdScreenState extends State<AdScreen> {
       children: [
         // Image Section
         Image.network(
-          item.imageUrl,
+          item.mainImage,
           width: double.infinity,
           height: 250,
           fit: BoxFit.cover,
