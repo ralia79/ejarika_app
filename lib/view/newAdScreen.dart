@@ -25,8 +25,7 @@ class _NewAdScreenState extends State<NewAdScreen> {
     'املاک',
     'وسایل نقلیه',
     'لوازم خانگی',
-    'خدمات',
-    'سایر',
+    'خدمات'
   ];
 
   Future<void> _pickImage() async {
