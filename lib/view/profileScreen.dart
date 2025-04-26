@@ -9,6 +9,7 @@ class Profilescreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('اجاریکا من', style: TextStyle(color: Colors.white)),
         backgroundColor: AppColors.primary,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -35,6 +36,10 @@ class Profilescreen extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.bookmark),
                   title: Text('علاقه‌مندی‌ها'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.sell),
+                  title: Text('آگهی های من'),
                 ),
                 ListTile(
                   leading: Icon(Icons.share),

@@ -114,6 +114,7 @@ class _NewAdScreenState extends State<NewAdScreen> {
         appBar: AppBar(
           title: Text('ساخت آگهی جدید', style: TextStyle(color: Colors.white)),
           backgroundColor: AppColors.primary,
+          automaticallyImplyLeading: false,
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),

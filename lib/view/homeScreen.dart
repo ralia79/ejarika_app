@@ -90,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
         child: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: AppColors.primary,
           title: SearchHeader(
             onSearch: _filterItems,
