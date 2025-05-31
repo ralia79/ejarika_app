@@ -1,5 +1,5 @@
+import 'package:ejarika_app/services/ad_service.dart';
 import 'package:flutter/material.dart';
-import 'package:Ejarika/services/ad_service.dart';
 import '../models/item.dart';
 import '../utils/colors.dart';
 

@@ -1,3 +1,7 @@
+import 'package:ejarika_app/models/category.dart';
+import 'package:ejarika_app/models/city.dart';
+import 'package:ejarika_app/models/user.dart';
+
 class Item {
   final int id;
   final bool isActive;
@@ -47,69 +51,6 @@ class Item {
       user: User.fromJson(json['user']),
       category: Category.fromJson(json['category']),
       city: City.fromJson(json['city']),
-    );
-  }
-}
-
-class User {
-  final int id;
-  final String login;
-  final String firstName;
-  final String lastName;
-  final String email;
-
-  User({
-    required this.id,
-    required this.login,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      login: json['login'] ?? '',
-      firstName: json['firstName'] ?? '',
-      lastName: json['lastName'] ?? '',
-      email: json['email'] ?? '',
-    );
-  }
-}
-
-class Category {
-  final int id;
-  final String name;
-
-  Category({required this.id, required this.name});
-
-  factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(
-      id: json['id'],
-      name: json['name'] ?? '',
-    );
-  }
-}
-
-class City {
-  final int id;
-  final String name;
-  final double latitude;
-  final double longitude;
-
-  City({
-    required this.id,
-    required this.name,
-    required this.latitude,
-    required this.longitude,
-  });
-
-  factory City.fromJson(Map<String, dynamic> json) {
-    return City(
-      id: json['id'],
-      name: json['name'] ?? '',
-      latitude: (json['latitude'] ?? 0).toDouble(),
-      longitude: (json['longitude'] ?? 0).toDouble(),
     );
   }
 }

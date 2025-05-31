@@ -1,6 +1,5 @@
-// widgets/item_card.dart
-import 'package:Ejarika/models/item.dart';
-import 'package:Ejarika/utils/formatter.dart';
+import 'package:ejarika_app/models/item.dart';
+import 'package:ejarika_app/utils/formatter.dart';
 import 'package:flutter/material.dart';
 
 class ItemCard extends StatelessWidget {

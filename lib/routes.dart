@@ -1,9 +1,9 @@
+import 'package:ejarika_app/view/adScreen.dart';
+import 'package:ejarika_app/view/chatsScreen.dart';
+import 'package:ejarika_app/view/homeScreen.dart';
+import 'package:ejarika_app/view/newAdScreen.dart';
+import 'package:ejarika_app/view/profileScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:Ejarika/view/chatsScreen.dart';
-import 'package:Ejarika/view/homeScreen.dart';
-import 'package:Ejarika/view/newAdScreen.dart';
-import 'package:Ejarika/view/profileScreen.dart';
-import 'package:Ejarika/view/adScreen.dart';
 
 class Routes {
   static const String home = '/';

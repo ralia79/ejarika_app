@@ -1,9 +1,9 @@
-import 'package:Ejarika/services/ad_service.dart';
-import 'package:Ejarika/utils/colors.dart';
+import 'package:ejarika_app/models/item.dart';
+import 'package:ejarika_app/services/ad_service.dart';
+import 'package:ejarika_app/utils/colors.dart';
+import 'package:ejarika_app/widgets/item_card.dart';
+import 'package:ejarika_app/widgets/search_header.dart';
 import 'package:flutter/material.dart';
-import 'package:Ejarika/models/item.dart';
-import 'package:Ejarika/widgets/item_card.dart';
-import 'package:Ejarika/widgets/search_header.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -49,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     try {
       List<Item> items = await adService.fetchItems();
-      print(items);
       setState(() {
         allItems = items;
         filteredItems = items;

@@ -1,14 +1,33 @@
 import 'dart:convert';
+
+import 'package:ejarika_app/models/city.dart';
+import 'package:ejarika_app/models/item.dart';
 import 'package:http/http.dart' as http;
-import 'package:Ejarika/models/item.dart';
 
 class AdService {
-  final String apiUrl =
-      "https://ejarika.clipboardapp.online/api/advertisements";
+  final String apiUrl = "https://ejarika.clipboardapp.online/api";
 
   Future<List<Item>> fetchItems() async {
     try {
-      final response = await http.get(Uri.parse(apiUrl + '?cityId=1'));
+      final response =
+          await http.get(Uri.parse(apiUrl + '/advertisements?cityId=1'));
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        List<dynamic> data = json.decode(decodedBody);
+        return data.map((item) => Item.fromJson(item)).toList();
+      } else {
+        throw Exception(
+            'Failed to load items - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load items: $e');
+    }
+  }
+
+  Future<List<Item>> fetchOwnItems() async {
+    try {
+      final response = await http.get(Uri.parse(apiUrl + '/advertisements/my'));
 
       if (response.statusCode == 200) {
         final decodedBody = utf8.decode(response.bodyBytes);
@@ -25,7 +44,8 @@ class AdService {
 
   Future<Item> findItem(itemId) async {
     try {
-      final response = await http.get(Uri.parse(apiUrl + '/' + itemId));
+      final response =
+          await http.get(Uri.parse(apiUrl + '/advertisements/' + itemId));
 
       if (response.statusCode == 200) {
         final decodedBody = utf8.decode(response.bodyBytes);
@@ -43,7 +63,8 @@ class AdService {
 
   Future<Item> createAd(ad) async {
     try {
-      final response = await http.post(Uri.parse(apiUrl), body: ad);
+      final response =
+          await http.post(Uri.parse(apiUrl + '/advertisements'), body: ad);
 
       if (response.statusCode == 200) {
         final decodedBody = utf8.decode(response.bodyBytes);
@@ -56,6 +77,23 @@ class AdService {
       }
     } catch (e) {
       throw Exception('Failed to load items: $e');
+    }
+  }
+
+  Future<List<City>> getCities() async {
+    try {
+      final response = await http.get(Uri.parse(apiUrl + '/cities'));
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        List<dynamic> data = json.decode(decodedBody);
+        return data.map((item) => City.fromJson(item)).toList();
+      } else {
+        throw Exception(
+            'Failed to load cities - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load cities: $e');
     }
   }
 }
