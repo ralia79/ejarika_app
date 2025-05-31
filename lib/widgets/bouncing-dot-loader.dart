@@ -21,7 +21,7 @@ class _BouncingDotsLoaderState extends State<BouncingDotsLoader>
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     )..repeat();
 

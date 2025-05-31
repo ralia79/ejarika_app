@@ -1,3 +1,4 @@
+import 'package:ejarika_app/main.dart';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/services/ad_service.dart';
 import 'package:ejarika_app/utils/colors.dart';
@@ -20,27 +21,37 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   final AdService adService = AdService();
+  bool errorOcc = false;
 
   Future<void> _loadCitiesAndNavigate() async {
     final prefs = await SharedPreferences.getInstance();
     final cities = prefs.getStringList('cities');
+    setState(() {
+      errorOcc = false;
+    });
 
     if (cities == null || cities.isEmpty) {
       try {
         List<City> cities = await adService.getCities();
         print(cities);
+        _navigateToHomeScreen();
       } catch (e) {
+        setState(() {
+          errorOcc = true;
+        });
         print('Failed to load items: $e');
       } finally {}
     } else {
       print('داده‌های شهرها از حافظه بارگذاری شدند: $cities');
+      _navigateToHomeScreen();
     }
+  }
 
-    await Future.delayed(const Duration(seconds: 2));
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => const MainNavigationWrapper()),
-    // );
+  _navigateToHomeScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const MainNavigationWrapper()),
+    );
   }
 
   @override
@@ -55,13 +66,42 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 200,
             ),
           ),
-
-          Positioned(
-            bottom: 50,
-            left: 0,
-            right: 0,
-            child: Center(child: BouncingDotsLoader()),
+          Text(
+            errorOcc.toString(),
+            style: TextStyle(color: AppColors.white),
           ),
+          errorOcc
+              ? Positioned(
+                  bottom: 50,
+                  left: 0,
+                  right: 0,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.white,
+                    ),
+                    onPressed: _loadCitiesAndNavigate,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.refresh,
+                          color: AppColors.secondary,
+                        ),
+                        SizedBox(width: 8),
+                        Text('دوباره تلاش کنید'),
+                      ],
+                    ),
+                  ),
+                )
+              : Positioned(
+                  bottom: 50,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: BouncingDotsLoader(),
+                  ),
+                )
         ],
       ),
     );
