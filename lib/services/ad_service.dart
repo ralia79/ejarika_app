@@ -7,10 +7,14 @@ import 'package:http/http.dart' as http;
 class AdService {
   final String apiUrl = "https://ejarika.clipboardapp.online/api";
 
-  Future<List<Item>> fetchItems() async {
+  Future<List<Item>> fetchItems(int cityId, String searchTerm) async {
     try {
-      final response =
-          await http.get(Uri.parse(apiUrl + '/advertisements?cityId=1'));
+      String url = '/advertisements?cityId=$cityId';
+      if (searchTerm.length > 0) {
+        url += '&query=$searchTerm';
+      }
+      print(url);
+      final response = await http.get(Uri.parse(apiUrl + url));
 
       if (response.statusCode == 200) {
         final decodedBody = utf8.decode(response.bodyBytes);

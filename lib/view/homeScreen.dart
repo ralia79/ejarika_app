@@ -1,9 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/item.dart';
 import 'package:ejarika_app/services/ad_service.dart';
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:ejarika_app/widgets/item_card.dart';
 import 'package:ejarika_app/widgets/search_header.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,23 +19,48 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Item> filteredItems = [];
   List<Item> allItems = [];
-  String selectedCity = 'مشهد';
+  int selectedCity = 1;
+  List<City> cities = [];
   final AdService adService = AdService();
   bool fetchingData = true;
   bool hasError = false;
   final ScrollController _scrollController = ScrollController();
+  Timer? _debounce;
+  String searchTerm = '';
 
   @override
   void initState() {
     super.initState();
-    _loadItems();
+    _loadInitialData();
     _setupScrollController();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
+  }
+
+  Future<void> _loadInitialData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedCityId = prefs.getInt('selected_city_id');
+    setState(() {
+      selectedCity = savedCityId ?? 1;
+    });
+
+    final citiesJson = prefs.getString('cities_json');
+    if (citiesJson != null) {
+      try {
+        final List<dynamic> decoded = jsonDecode(citiesJson);
+        setState(() {
+          cities = decoded.map((json) => City.fromJson(json)).toList();
+        });
+      } catch (e) {
+        print('خطا در بارگذاری شهرها از حافظه: $e');
+      }
+    }
+    await _loadItems();
   }
 
   void _setupScrollController() {
@@ -48,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       fetchingData = true;
     });
     try {
-      List<Item> items = await adService.fetchItems();
+      List<Item> items = await adService.fetchItems(selectedCity, searchTerm);
       setState(() {
         allItems = items;
         filteredItems = items;
@@ -67,32 +96,46 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _filterItems(String query) {
-    setState(() {
-      filteredItems = allItems
-          .where((item) =>
-              item.title.contains(query) || item.description.contains(query))
-          .toList();
+    searchTerm = query;
+    _loadItems();
+  }
+
+  void _onSearch(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _filterItems(query);
     });
   }
 
-  void _changeCity(String? city) {
-    if (city != null) {
+  void _changeCity(int? cityId) async {
+    if (cityId != null) {
       setState(() {
-        selectedCity = city;
+        selectedCity = cityId;
       });
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('selected_city_id', cityId);
+      await _loadItems();
     }
+  }
+
+  String _getCityName(int cityId) {
+    final city = cities.firstWhere(
+          (city) => city.id == cityId,
+      orElse: () => City(id: 1, name: 'Unknown', latitude: 0, longitude: 0),
+    );
+    return city.name;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(80),
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: AppColors.primary,
           title: SearchHeader(
-            onSearch: _filterItems,
+            onSearch: _onSearch, // Use debounced search handler
             selectedCity: selectedCity,
             onCityChanged: _changeCity,
           ),
@@ -117,21 +160,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('خطایی پیش آمده است !'),
-                    SizedBox(height: 10),
+                    const Text('خطایی پیش آمده است !'),
+                    const SizedBox(height: 10),
                     OutlinedButton(
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                       ),
                       onPressed: _loadItems,
                       child: fetchingData
-                          ? SizedBox(
-                              child: CircularProgressIndicator(strokeWidth: 1),
-                              height: 10,
-                              width: 10,
-                            )
-                          : Text('دوباره تلاش کنید'),
+                          ? const SizedBox(
+                        child: CircularProgressIndicator(strokeWidth: 1),
+                        height: 10,
+                        width: 10,
+                      )
+                          : const Text('دوباره تلاش کنید'),
                     ),
                   ],
                 ),
