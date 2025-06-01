@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:ejarika_app/main.dart';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/services/ad_service.dart';
@@ -25,25 +26,24 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _loadCitiesAndNavigate() async {
     final prefs = await SharedPreferences.getInstance();
-    final cities = prefs.getStringList('cities');
-    setState(() {
-      errorOcc = false;
-    });
+    final citiesJson = prefs.getString('cities_json');
 
-    if (cities == null || cities.isEmpty) {
+    if (citiesJson != null) {
+      print('داده‌های شهرها از حافظه بارگذاری شدند: $citiesJson');
+      _navigateToHomeScreen();
+    } else {
       try {
         List<City> cities = await adService.getCities();
-        print(cities);
+        final citiesJson = cities.map((city) => city.toJson()).toList();
+        await prefs.setString('cities_json', jsonEncode(citiesJson));
+        print('شهرها با موفقیت دریافت و ذخیره شدند: $cities');
         _navigateToHomeScreen();
       } catch (e) {
         setState(() {
           errorOcc = true;
         });
-        print('Failed to load items: $e');
-      } finally {}
-    } else {
-      print('داده‌های شهرها از حافظه بارگذاری شدند: $cities');
-      _navigateToHomeScreen();
+        print('خطا در بارگذاری شهرها: $e');
+      }
     }
   }
 
