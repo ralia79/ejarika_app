@@ -66,10 +66,6 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 200,
             ),
           ),
-          Text(
-            errorOcc.toString(),
-            style: TextStyle(color: AppColors.white),
-          ),
           errorOcc
               ? Positioned(
                   bottom: 50,
