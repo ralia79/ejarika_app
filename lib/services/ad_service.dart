@@ -13,7 +13,6 @@ class AdService {
       if (searchTerm.length > 0) {
         url += '&query=$searchTerm';
       }
-      print(url);
       final response = await http.get(Uri.parse(apiUrl + url));
 
       if (response.statusCode == 200) {
