@@ -91,17 +91,32 @@ class _AdContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item.title,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.address,
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            item.address,
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+
+                      IconButton(onPressed: null, icon: Icon(Icons.share)),
+                      // TODO: add api and check is fav or not
+                      IconButton(
+                          onPressed: null, icon: Icon(Icons.bookmark_border)),
+                    ],
                   ),
                   const Divider(color: AppColors.primary, thickness: 1),
                   const SizedBox(height: 12),
