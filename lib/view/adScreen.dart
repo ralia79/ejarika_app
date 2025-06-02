@@ -1,4 +1,5 @@
 import 'package:ejarika_app/services/ad_service.dart';
+import 'package:ejarika_app/widgets/image_slider.dart';
 import 'package:flutter/material.dart';
 import '../models/item.dart';
 import '../utils/colors.dart';
@@ -28,7 +29,6 @@ class _AdScreenState extends State<AdScreen> {
       _adDataFuture = _adService.findItem(widget.adId);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,80 +69,74 @@ class _AdScreenState extends State<AdScreen> {
 
 class _AdContent extends StatelessWidget {
   final Item item;
+  final List<String> imageUrls = [
+    'https://picsum.photos/id/1015/400/300',
+    'https://picsum.photos/id/1016/400/300',
+    'https://picsum.photos/id/1018/400/300',
+    'https://picsum.photos/id/1020/400/300',
+    'https://picsum.photos/id/1024/400/300',
+  ];
 
-  const _AdContent({Key? key, required this.item}) : super(key: key);
+  _AdContent({Key? key, required this.item}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Image Section
-        Image.network(
-          item.images.isNotEmpty ? item.images[0] : '',
-          width: double.infinity,
-          height: 250,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Container(
-            color: Colors.grey[300],
-            height: 250,
-            alignment: Alignment.center,
-            child: const Icon(Icons.broken_image, color: Colors.grey),
-          ),
-        ),
-
-        // Details Section
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ImageSliderScreen(images: imageUrls),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  item.address,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                const Divider(color: AppColors.primary, thickness: 1),
-                const SizedBox(height: 12),
-                _DetailRow(
-                  title: "قیمت",
-                  value: _formatPrice(item.price),
-                  valueStyle: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
+                  const SizedBox(height: 4),
+                  Text(
+                    item.address,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-                ),
-                const SizedBox(height: 30),
-                const Text(
-                  "توضیحات",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  const Divider(color: AppColors.primary, thickness: 1),
+                  const SizedBox(height: 12),
+                  _DetailRow(
+                    title: "قیمت",
+                    value: _formatPrice(item.price),
+                    valueStyle: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  item.description,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.6,
+                  const SizedBox(height: 30),
+                  const Text(
+                    "توضیحات",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    item.description,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: 100),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-
-        // Action Buttons
-        _ActionButtons(item: item), // Pass item to _ActionButtons
-      ],
+      ),
+      bottomNavigationBar: _ActionButtons(item: item),
     );
   }
 
@@ -154,35 +148,8 @@ class _AdContent extends StatelessWidget {
   }
 }
 
-class _DetailRow extends StatelessWidget {
-  final String title;
-  final String value;
-  final TextStyle? valueStyle;
-
-  const _DetailRow({
-    Key? key,
-    required this.title,
-    required this.value,
-    this.valueStyle,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: const TextStyle(fontSize: 15)),
-        Text(
-          value,
-          style: valueStyle ?? const TextStyle(fontSize: 15),
-        ),
-      ],
-    );
-  }
-}
-
 class _ActionButtons extends StatelessWidget {
-  final Item item; // Added to access mobileNumber
+  final Item item;
 
   const _ActionButtons({Key? key, required this.item}) : super(key: key);
 
@@ -216,19 +183,18 @@ class _ActionButtons extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Icon(Icons.close)),
+                    onPressed: () => Navigator.pop(context),
+                    child: const Icon(Icons.close),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(Icons.phone, color: AppColors.primary),
-                onTap: () => {
-                  launchDialer('09362686011')
-                },
-                title: Text(
+                onTap: () => launchDialer('09362686011'),
+                title: const Text(
                   '09362686011',
-                  style: const TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ],
@@ -238,52 +204,86 @@ class _ActionButtons extends StatelessWidget {
     );
   }
 
-  void _startChat() {
-    // Implement chat logic
-    print('Starting chat');
+  void _startChat(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("قابلیت چت هنوز پیاده‌سازی نشده")),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () => _showContactInfo(context), // Call with context
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        color: Colors.white,
+        child: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => _showContactInfo(context),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text(
-                'اطلاعات تماس',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                child: const Text(
+                  'اطلاعات تماس',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: _startChat,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => _startChat(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text(
-                'چت',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                child: const Text(
+                  'چت',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final String title;
+  final String value;
+  final TextStyle? valueStyle;
+
+  const _DetailRow({
+    Key? key,
+    required this.title,
+    required this.value,
+    this.valueStyle,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 15)),
+        Text(
+          value,
+          style: valueStyle ?? const TextStyle(fontSize: 15),
+        ),
+      ],
     );
   }
 }
