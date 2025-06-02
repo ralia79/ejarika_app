@@ -2,6 +2,7 @@ import 'package:ejarika_app/services/ad_service.dart';
 import 'package:flutter/material.dart';
 import '../models/item.dart';
 import '../utils/colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AdScreen extends StatefulWidget {
   final String adId;
@@ -27,6 +28,7 @@ class _AdScreenState extends State<AdScreen> {
       _adDataFuture = _adService.findItem(widget.adId);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +141,7 @@ class _AdContent extends StatelessWidget {
         ),
 
         // Action Buttons
-        _ActionButtons(),
+        _ActionButtons(item: item), // Pass item to _ActionButtons
       ],
     );
   }
@@ -180,11 +182,60 @@ class _DetailRow extends StatelessWidget {
 }
 
 class _ActionButtons extends StatelessWidget {
-  const _ActionButtons({Key? key}) : super(key: key);
+  final Item item; // Added to access mobileNumber
 
-  void _showContactInfo() {
-    // Implement contact info logic
-    print('Showing contact info');
+  const _ActionButtons({Key? key, required this.item}) : super(key: key);
+
+  void launchDialer(String phoneNumber) async {
+    final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(telUri)) {
+      await launchUrl(telUri);
+    } else {
+      throw 'Could not launch $telUri';
+    }
+  }
+
+  void _showContactInfo(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'اطلاعات تماس',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Icon(Icons.close)),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.phone, color: AppColors.primary),
+                onTap: () => {
+                  launchDialer('09362686011')
+                },
+                title: Text(
+                  '09362686011',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _startChat() {
@@ -200,7 +251,7 @@ class _ActionButtons extends StatelessWidget {
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: _showContactInfo,
+              onPressed: () => _showContactInfo(context), // Call with context
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
