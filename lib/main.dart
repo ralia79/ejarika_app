@@ -46,33 +46,55 @@ class MainNavigationWrapper extends StatefulWidget {
 class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int _selectedIndex = 0;
 
-  final List<String> _routes = [
-    Routes.home,
-    Routes.createAd,
-    Routes.chats,
-    Routes.profile
+  final List<Widget> _pages = [
+    RoutesPage(routeName: Routes.home), 
+    RoutesPage(routeName: Routes.createAd),
+    RoutesPage(routeName: Routes.chats),
+    RoutesPage(routeName: Routes.profile),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    _navigatorKey.currentState?.pushReplacementNamed(_routes[index]);
+  Future<bool> _onWillPop() async {
+    if (_selectedIndex != 0) {
+      setState(() {
+        _selectedIndex = 0; 
+      });
+      return false;
+    }
+    return true;
   }
-
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Navigator(
-        key: _navigatorKey,
-        initialRoute: Routes.home,
-        onGenerateRoute: Routes.generateRoute,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: _pages,
+        ),
+        bottomNavigationBar: BottomNavigation(
+          currentIndex: _selectedIndex,
+          onTabSelected: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
       ),
-      bottomNavigationBar: BottomNavigation(
-        onTabSelected: _onItemTapped,
-      ),
+    );
+  }
+}
+
+class RoutesPage extends StatelessWidget {
+  final String routeName;
+
+  const RoutesPage({required this.routeName, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      initialRoute: routeName,
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }

@@ -1,27 +1,15 @@
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
-class BottomNavigation extends StatefulWidget {
+class BottomNavigation extends StatelessWidget {
   final Function(int) onTabSelected;
+  final int currentIndex;
 
-  const BottomNavigation({Key? key, required this.onTabSelected})
-      : super(key: key);
-
-  @override
-  _BottomNavigationState createState() => _BottomNavigationState();
-}
-
-class _BottomNavigationState extends State<BottomNavigation> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    if (index != _selectedIndex) {
-      setState(() {
-        _selectedIndex = index;
-      });
-      widget.onTabSelected(index);
-    }
-  }
+  const BottomNavigation({
+    Key? key,
+    required this.onTabSelected,
+    required this.currentIndex,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +32,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
           label: 'اجاریکا من',
         ),
       ],
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
+      currentIndex: currentIndex,
+      onTap: onTabSelected,
       selectedItemColor: AppColors.primary,
       unselectedItemColor: Colors.grey,
       showUnselectedLabels: true,
