@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class Profilescreen extends StatelessWidget {
   final bool isLogined = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +41,7 @@ class Profilescreen extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.sell),
                   title: Text('آگهی های من'),
+                  onTap: () => Navigator.pushNamed(context, '/own-ad'),
                 ),
                 ListTile(
                   leading: Icon(Icons.share),

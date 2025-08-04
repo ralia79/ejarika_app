@@ -2,6 +2,7 @@ import 'package:ejarika_app/view/adScreen.dart';
 import 'package:ejarika_app/view/chatsScreen.dart';
 import 'package:ejarika_app/view/homeScreen.dart';
 import 'package:ejarika_app/view/newAdScreen.dart';
+import 'package:ejarika_app/view/ownAdScreen.dart';
 import 'package:ejarika_app/view/profileScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class Routes {
   static const String chats = '/chats';
   static const String profile = '/profile';
   static const String ad = '/ad';
+  static const String ownAd = '/own-ad';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final uri = Uri.parse(settings.name ?? '');
@@ -33,6 +35,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => ChatsScreen());
       case profile:
         return MaterialPageRoute(builder: (_) => Profilescreen());
+      case ownAd:
+        return MaterialPageRoute(builder: (_) => OwnAdScreen());
       default:
         return MaterialPageRoute(builder: (_) => HomeScreen());
     }
