@@ -1,7 +1,7 @@
 import 'package:ejarika_app/view/adScreen.dart';
 import 'package:ejarika_app/view/authentication/otp-verification.dart';
 import 'package:ejarika_app/view/authentication/sign-in.dart';
-import 'package:ejarika_app/view/chatsScreen.dart';
+import 'package:ejarika_app/view/chat/chat_list_screen.dart';
 import 'package:ejarika_app/view/homeScreen.dart';
 import 'package:ejarika_app/view/newAdScreen.dart';
 import 'package:ejarika_app/view/ownAdScreen.dart';
@@ -12,6 +12,7 @@ class Routes {
   static const String home = '/';
   static const String createAd = '/create-ad';
   static const String chats = '/chats';
+  static const String chat = '/chat';
   static const String profile = '/profile';
   static const String ad = '/ad';
   static const String ownAd = '/own-ad';
@@ -27,6 +28,13 @@ class Routes {
         return MaterialPageRoute(
           builder: (_) => AdScreen(adId: adId),
         );
+      } else if (uri.pathSegments[0] == 'chat' &&
+          uri.pathSegments.length == 2) {
+        final chatId = uri.pathSegments[1];
+        return MaterialPageRoute(
+          // TODO: add chat detail screen
+          builder: (_) => AdScreen(adId: chatId),
+        );
       }
     }
 
@@ -36,7 +44,7 @@ class Routes {
       case createAd:
         return MaterialPageRoute(builder: (_) => NewAdScreen());
       case chats:
-        return MaterialPageRoute(builder: (_) => ChatsScreen());
+        return MaterialPageRoute(builder: (_) => ChatListScreen());
       case profile:
         return MaterialPageRoute(builder: (_) => Profilescreen());
       case ownAd:
@@ -49,7 +57,8 @@ class Routes {
         if (phone == null) {
           return MaterialPageRoute(builder: (_) => SignInScreen());
         }
-        return MaterialPageRoute(builder: (_) => OtpVerificationScreen(phone: phone));
+        return MaterialPageRoute(
+            builder: (_) => OtpVerificationScreen(phone: phone));
       default:
         return MaterialPageRoute(builder: (_) => HomeScreen());
     }
