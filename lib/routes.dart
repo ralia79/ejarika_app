@@ -1,4 +1,6 @@
 import 'package:ejarika_app/view/adScreen.dart';
+import 'package:ejarika_app/view/authentication/otp-verification.dart';
+import 'package:ejarika_app/view/authentication/sign-in.dart';
 import 'package:ejarika_app/view/chatsScreen.dart';
 import 'package:ejarika_app/view/homeScreen.dart';
 import 'package:ejarika_app/view/newAdScreen.dart';
@@ -13,6 +15,8 @@ class Routes {
   static const String profile = '/profile';
   static const String ad = '/ad';
   static const String ownAd = '/own-ad';
+  static const String signInPage = '/sign-in';
+  static const String verify = 'verify';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final uri = Uri.parse(settings.name ?? '');
@@ -37,6 +41,15 @@ class Routes {
         return MaterialPageRoute(builder: (_) => Profilescreen());
       case ownAd:
         return MaterialPageRoute(builder: (_) => OwnAdScreen());
+      case signInPage:
+        return MaterialPageRoute(builder: (_) => SignInScreen());
+      case verify:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final phone = args?['phone'] as String?;
+        if (phone == null) {
+          return MaterialPageRoute(builder: (_) => SignInScreen());
+        }
+        return MaterialPageRoute(builder: (_) => OtpVerificationScreen(phone: phone));
       default:
         return MaterialPageRoute(builder: (_) => HomeScreen());
     }

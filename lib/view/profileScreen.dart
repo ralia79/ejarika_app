@@ -29,6 +29,7 @@ class Profilescreen extends StatelessWidget {
                     leading: Icon(Icons.login),
                     title: Text(
                         'برای استفاده از تمامی قابلیت‌های اجاریکا وارد شوید'),
+                    onTap: () => Navigator.pushNamed(context, '/sign-in'),
                   ),
                 Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
