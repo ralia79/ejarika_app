@@ -46,20 +46,28 @@ class MainNavigationWrapper extends StatefulWidget {
 class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    RoutesPage(routeName: Routes.home), 
-    RoutesPage(routeName: Routes.createAd),
-    RoutesPage(routeName: Routes.chats),
-    RoutesPage(routeName: Routes.profile),
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
   ];
 
   Future<bool> _onWillPop() async {
+    final currentNavigatorState = _navigatorKeys[_selectedIndex].currentState;
+
+    if (currentNavigatorState != null && currentNavigatorState.canPop()) {
+      currentNavigatorState.pop();
+      return false;
+    }
+
     if (_selectedIndex != 0) {
       setState(() {
-        _selectedIndex = 0; 
+        _selectedIndex = 0;
       });
       return false;
     }
+
     return true;
   }
 
@@ -70,7 +78,24 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
       child: Scaffold(
         body: IndexedStack(
           index: _selectedIndex,
-          children: _pages,
+          children: [
+            RoutesPage(
+              navigatorKey: _navigatorKeys[0],
+              routeName: Routes.home,
+            ),
+            RoutesPage(
+              navigatorKey: _navigatorKeys[1],
+              routeName: Routes.createAd,
+            ),
+            RoutesPage(
+              navigatorKey: _navigatorKeys[2],
+              routeName: Routes.chats,
+            ),
+            RoutesPage(
+              navigatorKey: _navigatorKeys[3],
+              routeName: Routes.profile,
+            ),
+          ],
         ),
         bottomNavigationBar: BottomNavigation(
           currentIndex: _selectedIndex,
@@ -87,12 +112,18 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
 
 class RoutesPage extends StatelessWidget {
   final String routeName;
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  const RoutesPage({required this.routeName, super.key});
+  const RoutesPage({
+    required this.routeName,
+    required this.navigatorKey,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Navigator(
+      key: navigatorKey,
       initialRoute: routeName,
       onGenerateRoute: Routes.generateRoute,
     );
