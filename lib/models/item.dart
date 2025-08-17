@@ -7,6 +7,7 @@ class Item {
   final bool isActive;
   final String title;
   final String description;
+  final String phone;
   final List<String> images;
   final String mainImage;
   final double price;
@@ -23,6 +24,7 @@ class Item {
     required this.isActive,
     required this.title,
     required this.description,
+    required this.phone,
     required this.images,
     required this.mainImage,
     required this.price,
@@ -41,6 +43,7 @@ class Item {
       isActive: json['isActive'],
       title: json['title'] ?? '',
       description: json['description'] ?? '',
+      phone: json['phone'] ?? '',
       images: List<String>.from(json['images'] ?? []),
       mainImage: json['mainImage'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
@@ -52,5 +55,28 @@ class Item {
       category: Category.fromJson(json['category']),
       city: City.fromJson(json['city']),
     );
+  }
+
+  @override
+  String toString() {
+    return '''
+Item(
+  id: $id,
+  isActive: $isActive,
+  title: $title,
+  description: $description,
+  phone: $phone,
+  images: $images,
+  mainImage: $mainImage,
+  price: $price,
+  address: $address,
+  createdAt: $createdAt,
+  approvedDate: $approvedDate,
+  updatedAt: $updatedAt,
+  user: $user,
+  category: $category,
+  city: $city
+)
+''';
   }
 }

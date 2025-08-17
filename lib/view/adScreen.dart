@@ -69,14 +69,6 @@ class _AdScreenState extends State<AdScreen> {
 
 class _AdContent extends StatelessWidget {
   final Item item;
-  final List<String> imageUrls = [
-    'https://picsum.photos/id/1015/400/300',
-    'https://picsum.photos/id/1016/400/300',
-    'https://picsum.photos/id/1018/400/300',
-    'https://picsum.photos/id/1020/400/300',
-    'https://picsum.photos/id/1024/400/300',
-  ];
-
   _AdContent({Key? key, required this.item}) : super(key: key);
 
   @override
@@ -85,7 +77,7 @@ class _AdContent extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ImageSliderScreen(images: imageUrls),
+            ImageSliderScreen(images: item.images),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -112,7 +104,6 @@ class _AdContent extends StatelessWidget {
                       ),
                       Spacer(),
 
-                      IconButton(onPressed: null, icon: Icon(Icons.share)),
                       // TODO: add api and check is fav or not
                       IconButton(
                           onPressed: null, icon: Icon(Icons.bookmark_border)),
@@ -206,9 +197,9 @@ class _ActionButtons extends StatelessWidget {
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(Icons.phone, color: AppColors.primary),
-                onTap: () => launchDialer('09362686011'),
-                title: const Text(
-                  '09362686011',
+                onTap: () => launchDialer(item.phone),
+                title: Text(
+                  item.phone,
                   style: TextStyle(fontSize: 16),
                 ),
               ),

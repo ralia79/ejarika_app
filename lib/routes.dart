@@ -17,7 +17,7 @@ class Routes {
   static const String ad = '/ad';
   static const String ownAd = '/own-ad';
   static const String signInPage = '/sign-in';
-  static const String verify = 'verify';
+  static const String verify = '/verify';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final uri = Uri.parse(settings.name ?? '');

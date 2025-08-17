@@ -50,7 +50,6 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
             },
           ),
         ),
-
         Positioned(
           bottom: 10,
           left: 10,
