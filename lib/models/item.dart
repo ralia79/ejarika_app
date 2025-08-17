@@ -4,7 +4,8 @@ import 'package:ejarika_app/models/user.dart';
 
 class Item {
   final int id;
-  final bool isActive;
+  final bool active;
+  final bool favorite;
   final String title;
   final String description;
   final String phone;
@@ -15,13 +16,14 @@ class Item {
   final String? createdAt;
   final String? approvedDate;
   final String? updatedAt;
-  final User user;
-  final Category category;
-  final City city;
+  final User? user;
+  final Category? category;
+  final City? city;
 
   Item({
     required this.id,
-    required this.isActive,
+    required this.active,
+    required this.favorite,
     required this.title,
     required this.description,
     required this.phone,
@@ -40,7 +42,8 @@ class Item {
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       id: json['id'],
-      isActive: json['isActive'],
+      active: json['active'],
+      favorite: json['favorite'],
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       phone: json['phone'] ?? '',
@@ -51,9 +54,10 @@ class Item {
       createdAt: json['createdAt'],
       approvedDate: json['approvedDate'],
       updatedAt: json['updatedAt'],
-      user: User.fromJson(json['user']),
-      category: Category.fromJson(json['category']),
-      city: City.fromJson(json['city']),
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
+      category:
+          json['category'] != null ? Category.fromJson(json['category']) : null,
+      city: json['city'] != null ? City.fromJson(json['city']) : null,
     );
   }
 
@@ -62,7 +66,8 @@ class Item {
     return '''
 Item(
   id: $id,
-  isActive: $isActive,
+  active: $active,
+  favorite: $favorite,
   title: $title,
   description: $description,
   phone: $phone,

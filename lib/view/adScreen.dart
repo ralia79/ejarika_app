@@ -71,6 +71,10 @@ class _AdContent extends StatelessWidget {
   final Item item;
   _AdContent({Key? key, required this.item}) : super(key: key);
 
+  void changeFav() async {
+    print(item.favorite);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,9 +108,13 @@ class _AdContent extends StatelessWidget {
                       ),
                       Spacer(),
 
-                      // TODO: add api and check is fav or not
                       IconButton(
-                          onPressed: null, icon: Icon(Icons.bookmark_border)),
+                        onPressed: changeFav,
+                        icon: Icon(item.favorite
+                            ? Icons.bookmark
+                            : Icons.bookmark_border),
+                        color: item.favorite ? AppColors.primary : Colors.grey,
+                      ),
                     ],
                   ),
                   const Divider(color: AppColors.primary, thickness: 1),
