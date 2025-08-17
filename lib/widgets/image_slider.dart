@@ -16,7 +16,8 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    if(widget.images.isNotEmpty) {
+      return Stack(
       children: [
         CarouselSlider.builder(
           itemCount: widget.images.length,
@@ -66,7 +67,11 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
           ),
         ),
       ],
-    );
+    ); 
+    } else {
+      return Image.asset("assets/images/no-image.jpg");
+    }
+    
   }
 }
 
