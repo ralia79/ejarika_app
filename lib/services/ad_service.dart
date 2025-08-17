@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/item.dart';
+import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/api_client.dart';
 
 class AdService {
@@ -66,7 +67,8 @@ class AdService {
 
   Future<Item> createAd(Map<String, dynamic> ad) async {
     try {
-      final response = await _apiClient.post('$apiUrl/advertisements', body: ad);
+      final response =
+          await _apiClient.post('$apiUrl/advertisements', body: ad);
 
       if (response.statusCode == 200) {
         final decodedBody = utf8.decode(response.bodyBytes);
@@ -95,6 +97,28 @@ class AdService {
       }
     } catch (e) {
       throw Exception('Failed to load cities: $e');
+    }
+  }
+
+  Future<Object> changeFavorite(User user, Item item) async {
+    try {
+      final response = await _apiClient.post('$apiUrl/favorites', body: {
+        "advertisement": item.toJson(),
+        "user": user.toJson(),
+        "id": item.id
+      });
+
+      if (response.statusCode == 200) {
+        print(response);
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final jsonData = json.decode(decodedBody) as Map<String, dynamic>;
+        return jsonData;
+      } else {
+        throw Exception(
+            'Failed to create ad - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to create ad: $e');
     }
   }
 }

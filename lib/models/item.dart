@@ -3,22 +3,22 @@ import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/user.dart';
 
 class Item {
-  final int id;
-  final bool active;
-  final bool favorite;
-  final String title;
-  final String description;
-  final String phone;
-  final List<String> images;
-  final String mainImage;
-  final double price;
-  final String address;
-  final String? createdAt;
-  final String? approvedDate;
-  final String? updatedAt;
-  final User? user;
-  final Category? category;
-  final City? city;
+  int id;
+  bool active;
+  bool favorite;
+  String title;
+  String description;
+  String phone;
+  List<String> images;
+  String mainImage;
+  double price;
+  String address;
+  String? createdAt;
+  String? approvedDate;
+  String? updatedAt;
+  User? user;
+  Category? category;
+  City? city;
 
   Item({
     required this.id,
@@ -59,6 +59,27 @@ class Item {
           json['category'] != null ? Category.fromJson(json['category']) : null,
       city: json['city'] != null ? City.fromJson(json['city']) : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'active': active,
+      'favorite': favorite,
+      'title': title,
+      'description': description,
+      'phone': phone,
+      'images': images,
+      'mainImage': mainImage,
+      'price': price,
+      'address': address,
+      'createdAt': createdAt,
+      'approvedDate': approvedDate,
+      'updatedAt': updatedAt,
+      'user': user?.toJson(),       
+      'category': category?.toJson(),
+      'city': city?.toJson(),      
+    };
   }
 
   @override

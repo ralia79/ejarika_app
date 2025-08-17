@@ -1,3 +1,4 @@
+import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/ad_service.dart';
 import 'package:ejarika_app/widgets/image_slider.dart';
 import 'package:flutter/material.dart';
@@ -67,16 +68,43 @@ class _AdScreenState extends State<AdScreen> {
   }
 }
 
-class _AdContent extends StatelessWidget {
-  final Item item;
-  _AdContent({Key? key, required this.item}) : super(key: key);
 
+class _AdContent extends StatefulWidget {
+  final Item item;
+  const _AdContent({Key? key, required this.item}) : super(key: key);
+
+  @override
+  State<_AdContent> createState() => _AdContentState();
+}
+
+class _AdContentState extends State<_AdContent> {
   void changeFav() async {
-    print(item.favorite);
+    try {
+      User user = User(
+        id: 1,
+        login: "user",
+        firstName: "",
+        lastName: "",
+        email: "user",
+      );
+
+      setState(() {
+        widget.item.favorite = !widget.item.favorite;
+      });
+
+      Object result = await AdService().changeFavorite(user, widget.item);
+      print(result);
+    } catch (e) {
+      setState(() {
+        widget.item.favorite = !widget.item.favorite;
+      });
+      print('خطا در تغییر وضعیت favorite: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -102,12 +130,14 @@ class _AdContent extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             item.address,
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
                           ),
                         ],
                       ),
-                      Spacer(),
-
+                      const Spacer(),
                       IconButton(
                         onPressed: changeFav,
                         icon: Icon(item.favorite
@@ -161,6 +191,7 @@ class _AdContent extends StatelessWidget {
         )} تومان";
   }
 }
+
 
 class _ActionButtons extends StatelessWidget {
   final Item item;
