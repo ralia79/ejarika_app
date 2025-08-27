@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/ad_service.dart';
 import 'package:ejarika_app/widgets/image_slider.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../models/item.dart';
 import '../utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdScreen extends StatefulWidget {
   final String adId;
@@ -68,7 +71,6 @@ class _AdScreenState extends State<AdScreen> {
   }
 }
 
-
 class _AdContent extends StatefulWidget {
   final Item item;
   const _AdContent({Key? key, required this.item}) : super(key: key);
@@ -79,26 +81,29 @@ class _AdContent extends StatefulWidget {
 
 class _AdContentState extends State<_AdContent> {
   void changeFav() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user_data');
+
     try {
-      User user = User(
-        id: 1,
-        login: "user",
-        firstName: "",
-        lastName: "",
-        email: "user",
-      );
+      if (userData != null) {
+        final Map<String, dynamic> userMap = json.decode(userData);
 
-      setState(() {
-        widget.item.favorite = !widget.item.favorite;
-      });
+        final user = User.fromJson(userMap);
 
-      Object result = await AdService().changeFavorite(user, widget.item);
-      print(result);
+        setState(() {
+          widget.item.favorite = !widget.item.favorite;
+        });
+
+        Object result = await AdService().changeFavorite(user, widget.item);
+        print(result);
+      } else {
+        print('user data not found !!!');
+      }
     } catch (e) {
       setState(() {
         widget.item.favorite = !widget.item.favorite;
       });
-      print('خطا در تغییر وضعیت favorite: $e');
+      print('faild to change status: $e');
     }
   }
 
@@ -191,7 +196,6 @@ class _AdContentState extends State<_AdContent> {
         )} تومان";
   }
 }
-
 
 class _ActionButtons extends StatelessWidget {
   final Item item;
