@@ -49,6 +49,24 @@ class AdService {
     }
   }
 
+  Future<User> fetchAccountData() async {
+    try {
+      final response = await _apiClient.get('$apiUrl/account');
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+
+        final Map<String, dynamic> data = json.decode(decodedBody);
+        return User.fromJson(data);
+      } else {
+        throw Exception(
+            'Failed to load user data - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load user data: $e');
+    }
+  }
+
   Future<Item> findItem(String itemId) async {
     try {
       final response = await _apiClient.get('$apiUrl/advertisements/$itemId');
@@ -100,7 +118,7 @@ class AdService {
       throw Exception('Failed to load cities: $e');
     }
   }
-  
+
   Future<List<Category>> getCategories() async {
     try {
       final response = await _apiClient.get('$apiUrl/categories');
