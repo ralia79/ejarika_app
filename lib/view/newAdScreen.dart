@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:ejarika_app/models/category.dart';
 import 'package:ejarika_app/utils/colors.dart';
+import 'package:ejarika_app/services/ad_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
@@ -13,20 +15,36 @@ class NewAdScreen extends StatefulWidget {
 
 class _NewAdScreenState extends State<NewAdScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? _category;
+  Category? _category;
   String? _title;
   String? _price;
   String? _description;
   final ImagePicker _picker = ImagePicker();
+  final AdService adService = AdService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+
   List<File> _images = [];
   bool _isSubmitting = false;
 
-  final List<String> _categories = [
-    'املاک',
-    'وسایل نقلیه',
-    'لوازم خانگی',
-    'خدمات'
-  ];
+  List<Category> _categories = [];
+
+  Future<void> _loadCategories() async {
+    try {
+      List<Category> categories = await adService.getCategories();
+      setState(() {
+        _categories = categories;
+      });
+      print('شهرها با موفقیت دریافت و ذخیره شدند: $categories');
+    } catch (e) {
+      print('خطا در بارگذاری شهرها: $e');
+    }
+  }
 
   Future<void> _pickImage() async {
     if (_images.length >= 8) return;
@@ -122,7 +140,7 @@ class _NewAdScreenState extends State<NewAdScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DropdownButtonFormField<String>(
+                DropdownButtonFormField<Category>(
                   decoration: InputDecoration(
                     labelText: 'دسته‌بندی',
                     border: OutlineInputBorder(),
@@ -130,10 +148,10 @@ class _NewAdScreenState extends State<NewAdScreen> {
                         EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   value: _category,
-                  items: _categories.map((String category) {
-                    return DropdownMenuItem<String>(
+                  items: _categories.map((Category category) {
+                    return DropdownMenuItem<Category>(
                       value: category,
-                      child: Text(category),
+                      child: Text(category.name),
                     );
                   }).toList(),
                   onChanged: (value) => setState(() => _category = value),

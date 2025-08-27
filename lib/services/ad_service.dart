@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ejarika_app/models/category.dart';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/item.dart';
 import 'package:ejarika_app/models/user.dart';
@@ -97,6 +98,23 @@ class AdService {
       }
     } catch (e) {
       throw Exception('Failed to load cities: $e');
+    }
+  }
+  
+  Future<List<Category>> getCategories() async {
+    try {
+      final response = await _apiClient.get('$apiUrl/categories');
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        List<dynamic> data = json.decode(decodedBody);
+        return data.map((item) => Category.fromJson(item)).toList();
+      } else {
+        throw Exception(
+            'Failed to load categories - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load categories: $e');
     }
   }
 
