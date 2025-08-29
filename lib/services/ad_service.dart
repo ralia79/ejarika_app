@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ejarika_app/models/category.dart';
+import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/item.dart';
 import 'package:ejarika_app/models/user.dart';
@@ -49,7 +50,7 @@ class AdService {
     }
   }
 
-    Future<List<Item>> fetchOwnFavItems() async {
+  Future<List<Item>> fetchOwnFavItems() async {
     try {
       final response = await _apiClient.get('$apiUrl/favorites');
 
@@ -57,6 +58,23 @@ class AdService {
         final decodedBody = utf8.decode(response.bodyBytes);
         List<dynamic> data = json.decode(decodedBody);
         return data.map((item) => Item.fromJson(item)).toList();
+      } else {
+        throw Exception(
+            'Failed to load items - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load items: $e');
+    }
+  }
+
+  Future<List<Chat>> fetchOwnChats() async {
+    try {
+      final response = await _apiClient.get('$apiUrl/chats');
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        List<dynamic> data = json.decode(decodedBody);
+        return data.map((item) => Chat.fromJson(item)).toList();
       } else {
         throw Exception(
             'Failed to load items - status code: ${response.statusCode}');

@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:ejarika_app/models/item.dart';
+import 'package:ejarika_app/models/chat.dart';
+import 'package:ejarika_app/services/ad_service.dart';
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:ejarika_app/widgets/chat_card.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,10 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-  List<Item> allItems = [];
+  List<Chat> allChats = [];
   bool fetchingData = true;
   bool hasError = false;
+  final AdService adService = AdService();
 
   @override
   void initState() {
@@ -25,20 +27,21 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   void dispose() {
     super.dispose();
+    _loadItems();
   }
 
   Future<void> _loadItems() async {
     setState(() {
       fetchingData = true;
+      hasError = false;
     });
     try {
-      // TODO: fetch all chats
-      // setState(() {
-      //   allItems = items;
-      //   filteredItems = items;
-      //   hasError = false;
-      // });
-
+      List<Chat> chats = await adService.fetchOwnChats();
+      print("chats");
+      print(chats);
+      setState(() {
+        allChats = chats;
+      });
     } catch (e) {
       setState(() {
         hasError = true;
@@ -51,31 +54,28 @@ class _ChatListScreenState extends State<ChatListScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: AppColors.primary,
-        ),
+      appBar: AppBar(
+        title: const Text('گفتگو های من', style: TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Column(
           children: [
-            if (fetchingData && !hasError)
-              SizedBox(
-                child: CircularProgressIndicator(
-                  color: AppColors.secondary,
-                  strokeWidth: 1,
+            if (fetchingData)
+              Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.secondary,
+                    strokeWidth: 1,
+                  ),
                 ),
-                height: 20,
-                width: 20,
-              ),
-            if (hasError)
+              )
+            else if (hasError)
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -90,31 +90,34 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         ),
                       ),
                       onPressed: _loadItems,
-                      child: fetchingData
-                          ? const SizedBox(
-                        child: CircularProgressIndicator(strokeWidth: 1),
-                        height: 10,
-                        width: 10,
-                      )
-                          : const Text('دوباره تلاش کنید'),
+                      child: const Text('دوباره تلاش کنید'),
                     ),
                   ],
                 ),
-              ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _loadItems,
-                color: AppColors.primary,
-                child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: allItems.length,
-                  itemBuilder: (ctx, index) {
-                    final item = allItems[index];
-                    return ChatCard(item: item);
-                  },
+              )
+            else if (allChats.isEmpty)
+              // حالت: لیست چت‌ها خالی است
+              const Expanded(
+                child: Center(
+                  child: Text('شما هیچ گفتگویی ندارید'),
+                ),
+              )
+            else
+              // حالت: نمایش لیست چت‌ها
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: _loadItems,
+                  color: AppColors.primary,
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: allChats.length,
+                    itemBuilder: (ctx, index) {
+                      final chat = allChats[index];
+                      return ChatCard(chat: chat);
+                    },
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

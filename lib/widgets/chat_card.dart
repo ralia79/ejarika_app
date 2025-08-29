@@ -1,16 +1,15 @@
-import 'package:ejarika_app/models/item.dart';
-import 'package:ejarika_app/utils/formatter.dart';
+import 'package:ejarika_app/models/chat.dart';
 import 'package:flutter/material.dart';
 
 class ChatCard extends StatelessWidget {
-  final Item item;
+  final Chat chat;
 
-  const ChatCard({Key? key, required this.item}) : super(key: key);
+  const ChatCard({Key? key, required this.chat}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () => Navigator.pushNamed(context, '/chat/${item.id}'),
+        onTap: () => Navigator.pushNamed(context, '/chat/${chat.id}'),
         child: Card(
           margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
           shape: RoundedRectangleBorder(
@@ -35,7 +34,7 @@ class ChatCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item.title,
+                          chat.advertisement?.title ?? "",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -45,20 +44,10 @@ class ChatCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          item.description,
+                          chat.advertisement?.description ?? "",
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade600,
-                          ),
-                          textDirection: TextDirection.rtl,
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          formatToToman(item.price),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
                           ),
                           textDirection: TextDirection.rtl,
                         ),
@@ -69,7 +58,9 @@ class ChatCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
-                      item.images.isNotEmpty ? item.images[0] : '',
+                      chat.advertisement!.images.isNotEmpty
+                          ? chat.advertisement!.images[0]
+                          : '',
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,

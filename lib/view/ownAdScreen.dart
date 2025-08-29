@@ -59,6 +59,7 @@ class _OwnAdScreen extends State<OwnAdScreen> {
       appBar: AppBar(
         title: Text('آگهی های من', style: TextStyle(color: Colors.white)),
         backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
