@@ -4,13 +4,13 @@ import 'user.dart';
 import 'message.dart';
 
 class Chat {
-  final int id;
+  final int? id;
   final User? user;
-  final List<Message> messages;
+  final List<Message>? messages;
   final Item? advertisement;
 
   Chat({
-    required this.id,
+    this.id,
     this.user,
     this.messages = const [],
     this.advertisement,
@@ -35,7 +35,7 @@ class Chat {
     return {
       'id': id,
       'user': user?.toJson(),
-      'messages': messages.map((m) => m.toJson()).toList(),
+      'messages': messages?.map((m) => m.toJson()).toList(),
       'advertisement': advertisement?.toJson(),
     };
   }

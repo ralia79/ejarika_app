@@ -32,8 +32,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
     try {
       List<Chat> chats = await adService.fetchOwnChats();
-      print("chats");
-      print(chats);
       if (!mounted) return;
       setState(() {
         allChats = chats;
@@ -57,8 +55,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
     });
     try {
       List<Chat> chats = await adService.fetchOwnChats();
-      print("chats");
-      print(chats);
       setState(() {
         allChats = chats;
       });

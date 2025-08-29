@@ -42,8 +42,8 @@ class Item {
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       id: json['id'],
-      active: json['active'],
-      favorite: json['favorite'],
+      active: json['active'] ?? true,
+      favorite: json['favorite'] ?? false,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       phone: json['phone'] ?? '',

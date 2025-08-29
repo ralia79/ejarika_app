@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/ad_service.dart';
 import 'package:ejarika_app/widgets/image_slider.dart';
@@ -199,8 +200,10 @@ class _AdContentState extends State<_AdContent> {
 
 class _ActionButtons extends StatelessWidget {
   final Item item;
+  _ActionButtons({Key? key, required this.item}) : super(key: key);
 
-  const _ActionButtons({Key? key, required this.item}) : super(key: key);
+  final AdService adService = AdService();
+  bool creatingChat = false;
 
   void launchDialer(String phoneNumber) async {
     final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
@@ -253,10 +256,17 @@ class _ActionButtons extends StatelessWidget {
     );
   }
 
-  void _startChat(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("قابلیت چت هنوز پیاده‌سازی نشده")),
-    );
+  Future<void> _startChat(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user_data');
+    if (userData != null) {
+      final Map<String, dynamic> userMap = json.decode(userData);
+      final user = User.fromJson(userMap);
+      creatingChat = true;
+      Chat newChat = new Chat(id: null, user: user, advertisement: item);
+      var result = await adService.createNewChat(newChat);
+      // TODO: goto chat detail screen
+    }
   }
 
   @override

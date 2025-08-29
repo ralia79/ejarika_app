@@ -77,6 +77,22 @@ class AdService {
         return data.map((item) => Chat.fromJson(item)).toList();
       } else {
         throw Exception(
+            'Failed to load chats - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load chats: $e');
+    }
+  }
+
+  Future createNewChat(Chat chat) async {
+    try {
+      final response =
+          await _apiClient.post('$apiUrl/chats', body: chat.toJson());
+
+      if (response.statusCode == 201) {
+        print(response);
+      } else {
+        throw Exception(
             'Failed to load items - status code: ${response.statusCode}');
       }
     } catch (e) {
