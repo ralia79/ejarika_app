@@ -24,13 +24,33 @@ class _ChatListScreenState extends State<ChatListScreen> {
     _loadItems();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _loadItems();
-  }
-
   Future<void> _loadItems() async {
+    setState(() {
+      fetchingData = true;
+      hasError = false;
+    });
+
+    try {
+      List<Chat> chats = await adService.fetchOwnChats();
+      print("chats");
+      print(chats);
+      if (!mounted) return;
+      setState(() {
+        allChats = chats;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        hasError = true;
+      });
+      print('Failed to load items: $e');
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        fetchingData = false;
+      });
+    }
+
     setState(() {
       fetchingData = true;
       hasError = false;
@@ -58,7 +78,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('گفتگو های من', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('گفتگو های من', style: TextStyle(color: Colors.white)),
         backgroundColor: AppColors.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),

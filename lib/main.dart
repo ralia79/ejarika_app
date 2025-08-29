@@ -1,4 +1,8 @@
 import 'package:ejarika_app/routes.dart';
+import 'package:ejarika_app/view/chat/chat_list_screen.dart';
+import 'package:ejarika_app/view/homeScreen.dart';
+import 'package:ejarika_app/view/newAdScreen.dart';
+import 'package:ejarika_app/view/profileScreen.dart';
 import 'package:ejarika_app/view/splashScreen.dart';
 import 'package:ejarika_app/widgets/bottom_navigation.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +35,7 @@ class MyApp extends StatelessWidget {
         Locale('fa', 'IR'),
         Locale('en', 'US'),
       ],
+      onGenerateRoute: Routes.generateRoute,
       home: const SplashScreen(),
     );
   }
@@ -46,21 +51,14 @@ class MainNavigationWrapper extends StatefulWidget {
 class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int _selectedIndex = 0;
 
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
+  final List<Widget> widgets = [
+    HomeScreen(),
+    NewAdScreen(),
+    ChatListScreen(),
+    Profilescreen()
   ];
 
   Future<bool> _onWillPop() async {
-    final currentNavigatorState = _navigatorKeys[_selectedIndex].currentState;
-
-    if (currentNavigatorState != null && currentNavigatorState.canPop()) {
-      currentNavigatorState.pop();
-      return false;
-    }
-
     if (_selectedIndex != 0) {
       setState(() {
         _selectedIndex = 0;
@@ -76,27 +74,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            RoutesPage(
-              navigatorKey: _navigatorKeys[0],
-              routeName: Routes.home,
-            ),
-            RoutesPage(
-              navigatorKey: _navigatorKeys[1],
-              routeName: Routes.createAd,
-            ),
-            RoutesPage(
-              navigatorKey: _navigatorKeys[2],
-              routeName: Routes.chats,
-            ),
-            RoutesPage(
-              navigatorKey: _navigatorKeys[3],
-              routeName: Routes.profile,
-            ),
-          ],
-        ),
+        body: widgets[_selectedIndex],
         bottomNavigationBar: BottomNavigation(
           currentIndex: _selectedIndex,
           onTabSelected: (index) {
