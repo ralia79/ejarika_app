@@ -264,8 +264,11 @@ class _ActionButtons extends StatelessWidget {
       final user = User.fromJson(userMap);
       creatingChat = true;
       Chat newChat = new Chat(id: null, user: user, advertisement: item);
-      var result = await adService.createNewChat(newChat);
-      // TODO: goto chat detail screen
+      print(item.toJson());
+      print(user.toJson());
+      var createdChat = await adService.createNewChat(newChat);
+      print(createdChat.id);
+      Navigator.pushNamed(context, '/chat/${createdChat.id}');
     }
   }
 

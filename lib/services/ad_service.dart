@@ -84,13 +84,32 @@ class AdService {
     }
   }
 
-  Future createNewChat(Chat chat) async {
+  Future<Chat> fetchChatById(int chatId) async {
+    try {
+      final response = await _apiClient.get('$apiUrl/chats/$chatId');
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final Map<String, dynamic> data = json.decode(decodedBody);
+        return Chat.fromJson(data);
+      } else {
+        throw Exception(
+            'Failed to load chat - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load chat: $e');
+    }
+  }
+
+  Future<Chat> createNewChat(Chat chat) async {
     try {
       final response =
           await _apiClient.post('$apiUrl/chats', body: chat.toJson());
 
       if (response.statusCode == 201) {
-        print(response);
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final Map<String, dynamic> data = json.decode(decodedBody);
+        return Chat.fromJson(data);
       } else {
         throw Exception(
             'Failed to load items - status code: ${response.statusCode}');

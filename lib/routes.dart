@@ -3,6 +3,7 @@ import 'package:ejarika_app/view/authentication/otp-verification.dart';
 import 'package:ejarika_app/view/authentication/sign-in.dart';
 import 'package:ejarika_app/view/chat/chat_list_screen.dart';
 import 'package:ejarika_app/view/homeScreen.dart';
+import 'package:ejarika_app/view/chat/chatDetailScreen.dart';
 import 'package:ejarika_app/view/newAdScreen.dart';
 import 'package:ejarika_app/view/ownAdScreen.dart';
 import 'package:ejarika_app/view/ownFavScreen.dart';
@@ -24,19 +25,24 @@ class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final uri = Uri.parse(settings.name ?? '');
 
+    // مدیریت روت های داینامیک
     if (uri.pathSegments.isNotEmpty) {
       if (uri.pathSegments[0] == 'ad' && uri.pathSegments.length == 2) {
         final adId = uri.pathSegments[1];
         return MaterialPageRoute(
           builder: (_) => AdScreen(adId: adId),
         );
-      } else if (uri.pathSegments[0] == 'chat' &&
-          uri.pathSegments.length == 2) {
-        final chatId = uri.pathSegments[1];
-        return MaterialPageRoute(
-          // TODO: add chat detail screen
-          builder: (_) => AdScreen(adId: chatId),
-        );
+      } else if (uri.pathSegments[0] == 'chat' && uri.pathSegments.length == 2) {
+        final chatId = int.tryParse(uri.pathSegments[1]);
+        if (chatId != null) {
+          return MaterialPageRoute(
+            builder: (_) => ChatDetailScreen(chatId: chatId),
+          );
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => ChatListScreen(),
+          );
+        }
       }
     }
 
