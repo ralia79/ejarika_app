@@ -49,6 +49,23 @@ class AdService {
     }
   }
 
+    Future<List<Item>> fetchOwnFavItems() async {
+    try {
+      final response = await _apiClient.get('$apiUrl/favorites');
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        List<dynamic> data = json.decode(decodedBody);
+        return data.map((item) => Item.fromJson(item)).toList();
+      } else {
+        throw Exception(
+            'Failed to load items - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load items: $e');
+    }
+  }
+
   Future<User> fetchAccountData() async {
     try {
       final response = await _apiClient.get('$apiUrl/account');

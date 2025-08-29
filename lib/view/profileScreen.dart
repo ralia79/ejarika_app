@@ -38,6 +38,7 @@ class Profilescreen extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.bookmark),
                   title: Text('علاقه‌مندی‌ها'),
+                  onTap: () => Navigator.pushNamed(context, '/favorites'),
                 ),
                 ListTile(
                   leading: Icon(Icons.sell),

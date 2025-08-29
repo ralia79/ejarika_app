@@ -5,14 +5,14 @@ import 'package:ejarika_app/utils/colors.dart';
 import 'package:ejarika_app/widgets/item_card.dart';
 import 'package:flutter/material.dart';
 
-class OwnAdScreen extends StatefulWidget {
-  const OwnAdScreen({Key? key}) : super(key: key);
+class OwnFavScreen extends StatefulWidget {
+  const OwnFavScreen({Key? key}) : super(key: key);
 
   @override
-  State<OwnAdScreen> createState() => _OwnAdScreen();
+  State<OwnFavScreen> createState() => _OwnFavScreen();
 }
 
-class _OwnAdScreen extends State<OwnAdScreen> {
+class _OwnFavScreen extends State<OwnFavScreen> {
   List<Item> allItems = [];
   final AdService adService = AdService();
   bool fetchingData = true;
@@ -36,7 +36,7 @@ class _OwnAdScreen extends State<OwnAdScreen> {
       fetchingData = true;
     });
     try {
-      List<Item> items = await adService.fetchOwnItems();
+      List<Item> items = await adService.fetchOwnFavItems();
       setState(() {
         allItems = items;
         hasError = false;
@@ -57,21 +57,22 @@ class _OwnAdScreen extends State<OwnAdScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('آگهی های من', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('علاقه مندی های من', style: TextStyle(color: Colors.white)),
         backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Column(
           children: [
             if (fetchingData && !hasError)
-              SizedBox(
-                child: CircularProgressIndicator(
-                  color: AppColors.secondary,
-                  strokeWidth: 1,
-                ),
+              const SizedBox(
                 height: 20,
                 width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1,
+                ),
               ),
             if (hasError)
               Expanded(
@@ -90,30 +91,44 @@ class _OwnAdScreen extends State<OwnAdScreen> {
                       onPressed: _loadItems,
                       child: fetchingData
                           ? const SizedBox(
-                              child: CircularProgressIndicator(strokeWidth: 1),
                               height: 10,
                               width: 10,
+                              child: CircularProgressIndicator(strokeWidth: 1),
                             )
                           : const Text('دوباره تلاش کنید'),
                     ),
                   ],
                 ),
               ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _loadItems,
-                color: AppColors.primary,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: allItems.length,
-                  itemBuilder: (ctx, index) {
-                    final item = allItems[index];
-                    return ItemCard(item: item);
-                  },
+            if (!hasError)
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: _loadItems,
+                  color: AppColors.primary,
+                  child: allItems.isEmpty && !fetchingData
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: const [
+                            SizedBox(height: 150),
+                            Center(
+                              child: Text(
+                                'هیچ آگهی‌ای در لیست علاقه‌مندی‌های شما وجود ندارد',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          controller: _scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: allItems.length,
+                          itemBuilder: (ctx, index) {
+                            final item = allItems[index];
+                            return ItemCard(item: item);
+                          },
+                        ),
                 ),
               ),
-            ),
           ],
         ),
       ),
