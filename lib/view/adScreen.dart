@@ -91,11 +91,13 @@ class _AdContentState extends State<_AdContent> {
 
         final user = User.fromJson(userMap);
 
+        Object result = widget.item.favorite
+            ? await AdService().removeFromFavorite(user, widget.item)
+            : await AdService().makeFavorite(user, widget.item);
+
         setState(() {
           widget.item.favorite = !widget.item.favorite;
         });
-
-        Object result = await AdService().changeFavorite(user, widget.item);
         print(result);
       } else {
         print('user data not found !!!');
@@ -277,7 +279,7 @@ class _ActionButtons extends StatelessWidget {
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        color: Colors.white,
+        color: Colors.transparent,
         child: Row(
           children: [
             Expanded(

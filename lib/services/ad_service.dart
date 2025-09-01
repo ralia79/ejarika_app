@@ -206,25 +206,40 @@ class AdService {
     }
   }
 
-  Future<Object> changeFavorite(User user, Item item) async {
+  Future<Object> makeFavorite(User user, Item item) async {
     try {
       final response = await _apiClient.post('$apiUrl/favorites', body: {
         "advertisement": item.toJson(),
         "user": user.toJson(),
-        "id": item.id
       });
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         print(response);
         final decodedBody = utf8.decode(response.bodyBytes);
         final jsonData = json.decode(decodedBody) as Map<String, dynamic>;
         return jsonData;
       } else {
         throw Exception(
-            'Failed to create ad - status code: ${response.statusCode}');
+            'Failed to make fav - status code: ${response.statusCode}');
       }
     } catch (e) {
-      throw Exception('Failed to create ad: $e');
+      throw Exception('Failed to make fav: $e');
+    }
+  }
+
+  Future<Object> removeFromFavorite(User user, Item item) async {
+    try {
+      final response =
+          await _apiClient.delete('$apiUrl/favorites/${user.id}/${item.id}');
+
+      if (response.statusCode == 204) {
+        return new Object();
+      } else {
+        throw Exception(
+            'Failed to remove fav - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to remove fav: $e');
     }
   }
 }

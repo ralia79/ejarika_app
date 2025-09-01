@@ -16,6 +16,12 @@ class ApiClient {
         headers: headers, body: jsonEncode(body));
   }
 
+  Future<http.Response> delete(String url, {Map<String, dynamic>? body}) async {
+    final headers = await _buildHeaders();
+    return _client.delete(Uri.parse(url),
+        headers: headers, body: jsonEncode(body));
+  }
+
   Future<Map<String, String>> _buildHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     // final token = prefs.getString('jwt_token');
