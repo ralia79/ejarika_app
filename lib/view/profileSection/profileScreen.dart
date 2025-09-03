@@ -1,6 +1,7 @@
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -29,7 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> logout() async {
-    print("removed");
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user_data');
     setState(() {
@@ -40,6 +40,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       SnackBar(
         content: Text('با موفقیت از حساب کاربری خودتون خارج شدین'),
         backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
         duration: Duration(seconds: 2),
       ),
     );
@@ -57,6 +66,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
     Navigator.pushNamed(context, routeName);
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -87,7 +104,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () => Navigator.pushNamed(context, '/sign-in'),
                   ),
                 Padding(
-                  padding: EdgeInsets.only(left: 10, right: 10),
+                  padding:
+                      EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
                   child: Divider(color: Colors.grey),
                 ),
                 ListTile(
@@ -101,22 +119,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onTap: () => _handleNavigation(context, '/own-ad'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.share),
-                  title: Text('دعوت از دوستان'),
-                ),
-                ListTile(
                   leading: Icon(Icons.support),
                   title: Text('پشتیبانی'),
+                  onTap: () => _showSnackbar(
+                      "برای پشتیبانی لطفا با support@ejarika.ir ارتباط بگیرید ."),
                 ),
                 ListTile(
                   leading: Icon(Icons.info),
                   title: Text('درباره ما'),
+                  onTap: () => _launchURL('https://ejarika.ir'),
                 ),
               ],
             ),
           ),
           Text('Version 1.0.0'),
-          Text('Made with ❤️ in Ejarika'),
+          Text('Made with ❤️ in Iran'),
           SizedBox(height: 20),
         ],
       ),
