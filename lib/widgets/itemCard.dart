@@ -73,6 +73,23 @@ class ItemCard extends StatelessWidget {
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null)
+                          return child;
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          alignment: Alignment.center,
+                          color: Colors.grey.shade100,
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    (loadingProgress.expectedTotalBytes ?? 1)
+                                : null,
+                            strokeWidth: 2,
+                          ),
+                        );
+                      },
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           width: 80,
@@ -85,7 +102,7 @@ class ItemCard extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
