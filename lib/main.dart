@@ -55,7 +55,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
     HomeScreen(),
     NewAdScreen(),
     ChatListScreen(),
-    Profilescreen()
+    ProfileScreen()
   ];
 
   Future<bool> _onWillPop() async {

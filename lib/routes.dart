@@ -54,7 +54,7 @@ class Routes {
       case chats:
         return MaterialPageRoute(builder: (_) => ChatListScreen());
       case profile:
-        return MaterialPageRoute(builder: (_) => Profilescreen());
+        return MaterialPageRoute(builder: (_) => ProfileScreen());
       case ownAd:
         return MaterialPageRoute(builder: (_) => OwnAdScreen());
       case signInPage:
