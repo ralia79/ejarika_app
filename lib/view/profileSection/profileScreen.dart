@@ -45,6 +45,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _handleNavigation(BuildContext context, String routeName) {
+    if (!isLogined) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('برای استفاده از این قابلیت ابتدا وارد حساب کاربری شوید'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    Navigator.pushNamed(context, routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,12 +93,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ListTile(
                   leading: Icon(Icons.bookmark),
                   title: Text('علاقه‌مندی‌ها'),
-                  onTap: () => Navigator.pushNamed(context, '/favorites'),
+                  onTap: () => _handleNavigation(context, '/favorites'),
                 ),
                 ListTile(
                   leading: Icon(Icons.sell),
                   title: Text('آگهی های من'),
-                  onTap: () => Navigator.pushNamed(context, '/own-ad'),
+                  onTap: () => _handleNavigation(context, '/own-ad'),
                 ),
                 ListTile(
                   leading: Icon(Icons.share),
