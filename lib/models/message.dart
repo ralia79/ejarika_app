@@ -2,15 +2,15 @@ import 'user.dart';
 import 'chat.dart';
 
 class Message {
-  final int id;
-  final String message;
-  final DateTime? sendDate;
-  final User? user;
-  final Chat? chat;
+  int? id;
+  String? message;
+  DateTime? sendDate;
+  User? user;
+  Chat? chat;
 
   Message({
-    required this.id,
-    required this.message,
+    this.id,
+    this.message,
     this.sendDate,
     this.user,
     this.chat,
@@ -20,9 +20,8 @@ class Message {
     return Message(
       id: json['id'] ?? 0,
       message: json['message'] ?? '',
-      sendDate: json['sendDate'] != null
-          ? DateTime.parse(json['sendDate'])
-          : null,
+      sendDate:
+          json['sendDate'] != null ? DateTime.parse(json['sendDate']) : null,
       user: json['user'] != null ? User.fromJson(json['user']) : null,
       chat: json['chat'] != null ? Chat.fromJson(json['chat']) : null,
     );

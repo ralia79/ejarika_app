@@ -4,6 +4,7 @@ import 'package:ejarika_app/models/category.dart';
 import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/item.dart';
+import 'package:ejarika_app/models/message.dart';
 import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/apiClient.dart';
 
@@ -102,7 +103,7 @@ class AdService {
   }
 
   Future<Chat> createNewChat(Chat chat) async {
-    try {
+  try {
       final response =
           await _apiClient.post('$apiUrl/chats', body: chat.toJson());
 
@@ -116,6 +117,24 @@ class AdService {
       }
     } catch (e) {
       throw Exception('Failed to load items: $e');
+    }
+  }
+
+  Future<Message> createNewMessage(Message message) async {
+    try {
+      final response =
+          await _apiClient.post('$apiUrl/messages', body: message.toJson());
+
+      if (response.statusCode == 201) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final Map<String, dynamic> data = json.decode(decodedBody);
+        return Message.fromJson(data);
+      } else {
+        throw Exception(
+            'Failed to create messages - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to create messages: $e');
     }
   }
 

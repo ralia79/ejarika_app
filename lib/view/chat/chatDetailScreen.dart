@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/message.dart';
+import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/adService.dart';
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   final int chatId;
@@ -21,11 +26,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   List<Message> messages = [];
   bool loading = true;
   bool sending = false;
+  User? user;
 
   @override
   void initState() {
     super.initState();
     _fetchChat();
+    _fetchUser();
+  }
+
+  Future<void> _fetchUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user_data');
+    if (userData != null) {
+      final Map<String, dynamic> userMap = json.decode(userData);
+      user = User.fromJson(userMap);
+    }
   }
 
   Future<void> _fetchChat() async {
@@ -57,22 +73,21 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   Future<void> _sendMessage() async {
     final text = _controller.text.trim();
     if (text.isEmpty || chat == null) return;
-
     setState(() {
       sending = true;
     });
-
     try {
-      // Message newMessage = await _adService.sendMessage(
-      //   chatId: chat!.id!,
-      //   message: text,
-      // );
-      Message newMessage = new Message(id: 1, message: text);
+      Message newMessage = new Message();
+      newMessage.chat = chat;
+      newMessage.message = text;
+      newMessage.user = user;
 
-      setState(() {
-        messages.add(newMessage);
-        _controller.clear();
-      });
+      await _adService.createNewMessage(newMessage).then((res) => {
+            setState(() {
+              messages.add(res);
+              _controller.clear();
+            })
+          });
     } catch (e) {
       print("Failed to send message: $e");
     } finally {
@@ -95,7 +110,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          msg.message,
+          msg.message ?? "",
           style: TextStyle(color: isMe ? Colors.white : Colors.black),
         ),
       ),
