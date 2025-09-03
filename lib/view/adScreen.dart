@@ -5,8 +5,8 @@ import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/adService.dart';
 import 'package:ejarika_app/widgets/imageSlider.dart';
 import 'package:flutter/material.dart';
-import '../../models/item.dart';
-import '../../utils/colors.dart';
+import '../models/item.dart';
+import '../utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -216,64 +216,93 @@ class _ActionButtons extends StatelessWidget {
     }
   }
 
-  void _showContactInfo(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'اطلاعات تماس',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+  Future<void> _showContactInfo(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user_data');
+
+    if (userData != null) {
+      showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'اطلاعات تماس',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Icon(Icons.close),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                leading: const Icon(Icons.phone, color: AppColors.primary),
-                onTap: () => launchDialer(item.phone),
-                title: Text(
-                  item.phone,
-                  style: TextStyle(fontSize: 16),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Icon(Icons.close),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                const SizedBox(height: 16),
+                ListTile(
+                  leading: const Icon(Icons.phone, color: AppColors.primary),
+                  onTap: () => launchDialer(item.phone),
+                  title: Text(
+                    item.phone,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      _showSnackbar(context, 'ابتدا باید وارد حساب کاربری شوید');
+    }
   }
 
   Future<void> _startChat(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final userData = prefs.getString('user_data');
+
     if (userData != null) {
       final Map<String, dynamic> userMap = json.decode(userData);
       final user = User.fromJson(userMap);
       creatingChat = true;
-      Chat newChat = new Chat();
+
+      Chat newChat = Chat();
       newChat.user = user;
       newChat.advertisement = item;
-      print(item.toJson());
-      print(user.toJson());
-      var createdChat = await adService.createNewChat(newChat);
-      print(createdChat.id);
-      Navigator.pushNamed(context, '/chat/${createdChat.id}');
+
+      try {
+        var createdChat = await adService.createNewChat(newChat);
+        print(createdChat.id);
+        Navigator.pushNamed(context, '/chat/${createdChat.id}');
+      } catch (e) {
+        if (e.toString().contains('status code: 409')) {
+          _showSnackbar(context, 'شما نمی‌توانید برای آگهی خود چت ایجاد کنید');
+        } else {
+          _showSnackbar(context, 'خطا در ایجاد چت');
+        }
+      } finally {
+        creatingChat = false;
+      }
+    } else {
+      _showSnackbar(context, 'ابتدا باید وارد حساب کاربری شوید');
     }
+  }
+
+  void _showSnackbar(context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override

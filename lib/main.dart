@@ -1,7 +1,7 @@
 import 'package:ejarika_app/routes.dart';
 import 'package:ejarika_app/view/chat/chatListScreen.dart';
-import 'package:ejarika_app/view/mainScreens/homeScreen.dart';
-import 'package:ejarika_app/view/mainScreens/newAdScreen.dart';
+import 'package:ejarika_app/view/homeScreen.dart';
+import 'package:ejarika_app/view/newAdScreen.dart';
 import 'package:ejarika_app/view/profileSection/profileScreen.dart';
 import 'package:ejarika_app/view/splashScreen.dart';
 import 'package:ejarika_app/widgets/bottomNavigation.dart';
