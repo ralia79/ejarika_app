@@ -16,29 +16,31 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-    _loadCitiesAndNavigate();
-  }
-
   final AdService adService = AdService();
   bool errorOcc = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
 
-    Future<void> _loadUserData() async {
+  Future<void> _initializeApp() async {
+    await _loadUserData();
+    await _loadCitiesAndNavigate();
+  }
+
+  Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     try {
-        User user = await adService.fetchAccountData();
-        await prefs.setString('user_data', jsonEncode(user));
-        print('user loaded successfull:  $user');
-      } catch (e) {
-        setState(() {
-          errorOcc = true;
-        });
-        print('faild to read users:  $e');
-      }
+      User user = await adService.fetchAccountData();
+      await prefs.setString('user_data', jsonEncode(user));
+      print('user loaded successfully: $user');
+    } catch (e) {
+      print('failed to load user: $e');
+      await prefs.remove('user_data');
+      await prefs.remove('jwt_token');
+    }
   }
 
   Future<void> _loadCitiesAndNavigate() async {
@@ -46,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final citiesJson = prefs.getString('cities_json');
 
     if (citiesJson != null) {
-      print('cities loaded successfully $citiesJson');
+      print('cities loaded from prefs: $citiesJson');
       _navigateToHomeScreen();
     } else {
       try {
@@ -56,15 +58,17 @@ class _SplashScreenState extends State<SplashScreen> {
         print('cities loaded successfully and stored: $cities');
         _navigateToHomeScreen();
       } catch (e) {
+        print('failed to load cities: $e');
+        if (!mounted) return;
         setState(() {
           errorOcc = true;
         });
-        print('faild to read cities $e');
       }
     }
   }
 
-  _navigateToHomeScreen() {
+  void _navigateToHomeScreen() {
+    if (!mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const MainNavigationWrapper()),
@@ -92,29 +96,28 @@ class _SplashScreenState extends State<SplashScreen> {
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.white,
                     ),
-                    onPressed: _loadCitiesAndNavigate,
+                    onPressed: _initializeApp,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.refresh,
                           color: AppColors.secondary,
                         ),
-                        SizedBox(width: 8),
-                        Text('دوباره تلاش کنید'),
+                        const SizedBox(width: 8),
+                        const Text('دوباره تلاش کنید'),
                       ],
                     ),
                   ),
                 )
-              : Positioned(
+              : const Positioned(
                   bottom: 50,
                   left: 0,
                   right: 0,
                   child: Center(
                     child: BouncingDotsLoader(),
                   ),
-                )
+                ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomNavigation extends StatelessWidget {
   final Function(int) onTabSelected;
@@ -10,6 +11,29 @@ class BottomNavigation extends StatelessWidget {
     required this.onTabSelected,
     required this.currentIndex,
   }) : super(key: key);
+
+  Future<bool> _isUserLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('user_data');
+    return userData != null;
+  }
+
+  void _handleTap(BuildContext context, int index) async {
+    if (index == 1 || index == 2) {
+      final isLoggedIn = await _isUserLoggedIn();
+      if (!isLoggedIn) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('برای دسترسی به این بخش باید وارد حساب کاربری شوید'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return; 
+      }
+    }
+    onTabSelected(index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +57,7 @@ class BottomNavigation extends StatelessWidget {
         ),
       ],
       currentIndex: currentIndex,
-      onTap: onTabSelected,
+      onTap: (index) => _handleTap(context, index),
       selectedItemColor: AppColors.primary,
       unselectedItemColor: Colors.grey,
       showUnselectedLabels: true,
