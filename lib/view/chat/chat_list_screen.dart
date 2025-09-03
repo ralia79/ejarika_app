@@ -25,6 +25,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   }
 
   Future<void> _loadItems() async {
+    allChats = [];
     setState(() {
       fetchingData = true;
       hasError = false;
@@ -113,14 +114,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 ),
               )
             else if (allChats.isEmpty)
-              // حالت: لیست چت‌ها خالی است
               const Expanded(
                 child: Center(
                   child: Text('شما هیچ گفتگویی ندارید'),
                 ),
               )
             else
-              // حالت: نمایش لیست چت‌ها
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: _loadItems,

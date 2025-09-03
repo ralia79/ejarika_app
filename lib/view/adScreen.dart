@@ -265,7 +265,9 @@ class _ActionButtons extends StatelessWidget {
       final Map<String, dynamic> userMap = json.decode(userData);
       final user = User.fromJson(userMap);
       creatingChat = true;
-      Chat newChat = new Chat(id: null, user: user, advertisement: item);
+      Chat newChat = new Chat();
+      newChat.user = user;
+      newChat.advertisement = item;
       print(item.toJson());
       print(user.toJson());
       var createdChat = await adService.createNewChat(newChat);

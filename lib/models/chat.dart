@@ -4,10 +4,10 @@ import 'user.dart';
 import 'message.dart';
 
 class Chat {
-  final int? id;
-  final User? user;
-  final List<Message>? messages;
-  final Item? advertisement;
+  int? id;
+  User? user;
+  List<Message>? messages;
+  Item? advertisement;
 
   Chat({
     this.id,
