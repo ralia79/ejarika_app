@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:ejarika_app/main.dart';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/user.dart';
-import 'package:ejarika_app/services/ad_service.dart';
+import 'package:ejarika_app/services/adService.dart';
 import 'package:ejarika_app/utils/colors.dart';
-import 'package:ejarika_app/widgets/bouncing-dot-loader.dart';
+import 'package:ejarika_app/widgets/bouncingDotLoader.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

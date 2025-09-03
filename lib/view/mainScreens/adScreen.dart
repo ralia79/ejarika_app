@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/user.dart';
-import 'package:ejarika_app/services/ad_service.dart';
-import 'package:ejarika_app/widgets/image_slider.dart';
+import 'package:ejarika_app/services/adService.dart';
+import 'package:ejarika_app/widgets/imageSlider.dart';
 import 'package:flutter/material.dart';
-import '../models/item.dart';
-import '../utils/colors.dart';
+import '../../models/item.dart';
+import '../../utils/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

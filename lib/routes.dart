@@ -1,13 +1,13 @@
-import 'package:ejarika_app/view/adScreen.dart';
+import 'package:ejarika_app/view/mainScreens/adScreen.dart';
 import 'package:ejarika_app/view/authentication/otp-verification.dart';
 import 'package:ejarika_app/view/authentication/sign-in.dart';
-import 'package:ejarika_app/view/chat/chat_list_screen.dart';
-import 'package:ejarika_app/view/homeScreen.dart';
+import 'package:ejarika_app/view/chat/chatListScreen.dart';
+import 'package:ejarika_app/view/mainScreens/homeScreen.dart';
 import 'package:ejarika_app/view/chat/chatDetailScreen.dart';
-import 'package:ejarika_app/view/newAdScreen.dart';
-import 'package:ejarika_app/view/ownAdScreen.dart';
-import 'package:ejarika_app/view/ownFavScreen.dart';
-import 'package:ejarika_app/view/profileScreen.dart';
+import 'package:ejarika_app/view/mainScreens/newAdScreen.dart';
+import 'package:ejarika_app/view/profileSection/ownAdScreen.dart';
+import 'package:ejarika_app/view/profileSection/ownFavScreen.dart';
+import 'package:ejarika_app/view/profileSection/profileScreen.dart';
 import 'package:flutter/material.dart';
 
 class Routes {

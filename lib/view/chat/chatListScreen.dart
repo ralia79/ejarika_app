@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:ejarika_app/models/chat.dart';
-import 'package:ejarika_app/services/ad_service.dart';
+import 'package:ejarika_app/services/adService.dart';
 import 'package:ejarika_app/utils/colors.dart';
-import 'package:ejarika_app/widgets/chat_card.dart';
+import 'package:ejarika_app/widgets/chatCard.dart';
 import 'package:flutter/material.dart';
 
 class ChatListScreen extends StatefulWidget {

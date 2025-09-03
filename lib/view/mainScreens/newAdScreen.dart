@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:ejarika_app/models/category.dart';
 import 'package:ejarika_app/utils/colors.dart';
-import 'package:ejarika_app/services/ad_service.dart';
+import 'package:ejarika_app/services/adService.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';

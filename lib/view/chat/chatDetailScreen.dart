@@ -1,6 +1,6 @@
 import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/message.dart';
-import 'package:ejarika_app/services/ad_service.dart';
+import 'package:ejarika_app/services/adService.dart';
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;

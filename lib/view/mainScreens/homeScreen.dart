@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/item.dart';
-import 'package:ejarika_app/services/ad_service.dart';
+import 'package:ejarika_app/services/adService.dart';
 import 'package:ejarika_app/utils/colors.dart';
-import 'package:ejarika_app/widgets/item_card.dart';
-import 'package:ejarika_app/widgets/search_header.dart';
+import 'package:ejarika_app/widgets/itemCard.dart';
+import 'package:ejarika_app/widgets/searchHeader.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

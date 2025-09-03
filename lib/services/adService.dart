@@ -5,7 +5,7 @@ import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/city.dart';
 import 'package:ejarika_app/models/item.dart';
 import 'package:ejarika_app/models/user.dart';
-import 'package:ejarika_app/services/api_client.dart';
+import 'package:ejarika_app/services/apiClient.dart';
 
 class AdService {
   final String apiUrl = "https://ejarika.clipboardapp.online/api";
