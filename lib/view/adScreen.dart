@@ -29,7 +29,7 @@ class _AdScreenState extends State<AdScreen> {
     _loadAdData();
   }
 
-  void _loadAdData() {
+  void _loadAdData(){
     setState(() {
       _adDataFuture = _adService.findItem(widget.adId);
     });
@@ -137,7 +137,7 @@ class _AdContentState extends State<_AdContent> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            item.address,
+                            item.category?.name ?? "بدون دسته بندی",
                             style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,

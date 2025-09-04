@@ -77,6 +77,7 @@ class _NewAdScreenState extends State<NewAdScreen> {
         final Map<String, dynamic> userMap = json.decode(userData);
 
         final user = User.fromJson(userMap);
+        final selectedCityId = prefs.getInt('selected_city_id');
 
         setState(() {
           _isSubmitting = true;
@@ -92,7 +93,7 @@ class _NewAdScreenState extends State<NewAdScreen> {
                 "price": int.tryParse(_price ?? "0"),
                 "user": user,
                 "category": _category,
-                "city": {"id": 1}
+                "city": selectedCityId
               }),
               contentType: MediaType("application", "json"),
             ),
