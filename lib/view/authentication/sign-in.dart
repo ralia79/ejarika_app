@@ -1,4 +1,5 @@
 import 'package:ejarika_app/routes.dart';
+import 'package:ejarika_app/services/adService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,22 +12,49 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _phoneController = TextEditingController();
+  final AdService adService = AdService();
+  bool sending = false;
 
+  Future<void> _submitPhone() async {
+    FocusScope.of(context).unfocus();
+    final phone = _phoneController.text.trim();
+    if (phone.isEmpty || phone.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('لطفاً شماره تماس معتبر وارد کنید')),
+      );
+      return;
+    }
 
-Future<void> _submitPhone() async {
-  final phone = _phoneController.text.trim();
-  if (phone.isEmpty || phone.length < 10) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('لطفاً شماره تماس معتبر وارد کنید')),
-    );
-    return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_phone', phone);
+
+    setState(() {
+      sending = true;
+    });
+
+    try {
+      var response = await adService.loginRequest(phone);
+      print(response);
+      await Navigator.pushNamed(context, Routes.verify,
+          arguments: {'phone': phone});
+    } catch (e) {
+      _showSnackbar(context, "خطایی رخ داده است لطفا دوباره تلاش کنید");
+    } finally {
+      setState(() {
+        sending = false;
+      });
+    }
   }
 
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setString('user_phone', phone);
-
-  Navigator.pushNamed(context, Routes.verify, arguments: {'phone': phone});
-}
+  void _showSnackbar(context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +114,22 @@ Future<void> _submitPhone() async {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'تایید',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    child: sending
+                        ? SizedBox(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1,
+                              color: Colors.white,
+                            ),
+                            height: 20,
+                            width: 20,
+                          )
+                        : const Text(
+                            'تایید',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
                   ),
                 ],
               ),

@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:ejarika_app/models/category.dart';
+import 'package:ejarika_app/models/item.dart';
+import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/utils/colors.dart';
 import 'package:ejarika_app/services/adService.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewAdScreen extends StatefulWidget {
   @override
@@ -27,7 +31,6 @@ class _NewAdScreenState extends State<NewAdScreen> {
     super.initState();
     _loadCategories();
   }
-
 
   List<File> _images = [];
   bool _isSubmitting = false;
@@ -64,61 +67,59 @@ class _NewAdScreenState extends State<NewAdScreen> {
   }
 
   Future<void> _submitForm() async {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      final prefs = await SharedPreferences.getInstance();
+      final userData = prefs.getString('user_data');
 
-      setState(() {
-        _isSubmitting = true;
-      });
+      if (userData != null) {
+        final Map<String, dynamic> userMap = json.decode(userData);
 
-      try {
-        FormData formData = FormData.fromMap({
-          "advertisement": await MultipartFile.fromString(
-            jsonEncode({
-              "isActive": false,
-              "title": _title,
-              "description": _description,
-              "price": int.tryParse(_price ?? "0"),
-              "address": "آدرس اشتباه",
-              "user": {"id": 3},
-              "category": {"id": 1},
-              "city": {"id": 1}
-            }),
-            contentType: MediaType("application", "json"),
-          ),
-          "images": [
-            for (var image in _images)
-              await MultipartFile.fromFile(
-                image.path,
-                filename: image.path.split('/').last,
-              ),
-          ],
+        final user = User.fromJson(userMap);
+
+        setState(() {
+          _isSubmitting = true;
         });
 
-        Dio dio = Dio();
-        final response = await dio.post(
-          'https://ejarika.clipboardapp.online/api/advertisements',
-          data: formData,
-        );
+        try {
+          FormData formData = FormData.fromMap({
+            "advertisement": await MultipartFile.fromString(
+              jsonEncode({
+                "isActive": false,
+                "title": _title,
+                "description": _description,
+                "price": int.tryParse(_price ?? "0"),
+                "user": user,
+                "category": _category,
+                "city": {"id": 1}
+              }),
+              contentType: MediaType("application", "json"),
+            ),
+            "images": [
+              for (var image in _images)
+                await MultipartFile.fromFile(
+                  image.path,
+                  filename: image.path.split('/').last,
+                ),
+            ],
+          });
 
-        if (response.statusCode == 201) {
+          var response = await adService.createNewAdvertisement(formData);
+          print(response);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('آگهی با موفقیت ثبت شد!')),
           );
-        } else {
+        } catch (e) {
+          print("Error: $e");
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('ثبت آگهی با خطا مواجه شد!')),
+            SnackBar(content: Text('خطا در ارسال داده‌ها')),
           );
+        } finally {
+          setState(() {
+            _isSubmitting = false;
+          });
         }
-      } catch (e) {
-        print("Error: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطا در ارسال داده‌ها')),
-        );
-      } finally {
-        setState(() {
-          _isSubmitting = false;
-        });
       }
     }
   }

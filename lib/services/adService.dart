@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:ejarika_app/models/category.dart';
 import 'package:ejarika_app/models/chat.dart';
 import 'package:ejarika_app/models/city.dart';
@@ -7,10 +8,49 @@ import 'package:ejarika_app/models/item.dart';
 import 'package:ejarika_app/models/message.dart';
 import 'package:ejarika_app/models/user.dart';
 import 'package:ejarika_app/services/apiClient.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdService {
-  final String apiUrl = "https://ejarika.clipboardapp.online/api";
+  final String apiUrl = "https://ejarika.ir/api";
   final ApiClient _apiClient = ApiClient();
+
+  Future<Object> loginRequest(String phone) async {
+    Map<String, dynamic> phoneObject = {"username": phone};
+    try {
+      final response = await _apiClient.post(
+        '$apiUrl/loginRequest',
+        body: phoneObject,
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw Exception(
+            'Failed to login request - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to login request: $e');
+    }
+  }
+
+  Future<Object> confirmLogin(String phone, String code) async {
+    Map<String, dynamic> phoneObject = {"username": phone, "password": code};
+    try {
+      final response = await _apiClient.post(
+        '$apiUrl/authenticate',
+        body: phoneObject,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw Exception(
+            'Failed to login request - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to login request: $e');
+    }
+  }
 
   Future<List<Item>> fetchItems(int cityId, String searchTerm) async {
     try {
@@ -103,7 +143,7 @@ class AdService {
   }
 
   Future<Chat> createNewChat(Chat chat) async {
-  try {
+    try {
       final response =
           await _apiClient.post('$apiUrl/chats', body: chat.toJson());
 
@@ -111,6 +151,35 @@ class AdService {
         final decodedBody = utf8.decode(response.bodyBytes);
         final Map<String, dynamic> data = json.decode(decodedBody);
         return Chat.fromJson(data);
+      } else {
+        throw Exception(
+            'Failed to load items - status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load items: $e');
+    }
+  }
+
+  Future<Item> createNewAdvertisement(FormData advertisement) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('jwt_token');
+      final Dio _dio = Dio();
+
+      final response = await _dio.post(
+        '$apiUrl/advertisements',
+        data: advertisement,
+        options: Options(
+          headers: {
+            "Authorization": token != null ? "Bearer $token" : "",
+            "Content-Type": "multipart/form-data",
+          },
+        ),
+      );
+
+      if (response.statusCode == 201) {
+        final decodedBody = jsonDecode(jsonEncode(response.data));
+        return Item.fromJson(decodedBody);
       } else {
         throw Exception(
             'Failed to load items - status code: ${response.statusCode}');

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ejarika_app/services/adService.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +15,9 @@ class OtpVerificationScreen extends StatefulWidget {
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final TextEditingController _otpController = TextEditingController();
+  final AdService adService = AdService();
   bool _isResendAvailable = false;
+  bool sending = false;
   int _resendSeconds = 60;
   Timer? _timer;
   String? _phone;
@@ -65,7 +68,29 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     super.dispose();
   }
 
-  void _submitOtp() {
+  Future<void> _resendOtp() async {
+    if (!_isResendAvailable) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('کد تایید مجدداً ارسال شد')),
+    );
+    setState(() {
+      sending = true;
+    });
+
+    try {
+      var response = await adService.loginRequest(_phone ?? "");
+      _startResendTimer();
+    } catch (e) {
+      _showSnackbar(context, "خطایی رخ داده است لطفا دوباره تلاش کنید");
+    } finally {
+      setState(() {
+        sending = false;
+      });
+    }
+  }
+
+  void _submitOtp() async {
+    FocusScope.of(context).unfocus();
     final otp = _otpController.text.trim();
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -73,15 +98,30 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       );
       return;
     }
+    setState(() {
+      sending = true;
+    });
 
-    Navigator.pushNamed(context, '/');
+    try {
+      var response = await adService.confirmLogin(_phone ?? "", otp);
+      print(response);
+      Navigator.pushNamed(context, '/');
+    } catch (e) {
+      _showSnackbar(context, "خطایی رخ داده است لطفا دوباره تلاش کنید");
+    } finally {
+      setState(() {
+        sending = false;
+      });
+    }
   }
 
-  void _resendOtp() {
-    if (!_isResendAvailable) return;
-    _startResendTimer();
+  void _showSnackbar(context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('کد تایید مجدداً ارسال شد')),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 
@@ -148,11 +188,22 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'ورود',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    child: sending
+                        ? SizedBox(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1,
+                              color: Colors.white,
+                            ),
+                            height: 20,
+                            width: 20,
+                          )
+                        : const Text(
+                            'تایید',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
                   ),
                   const SizedBox(height: 20),
                   TextButton(
