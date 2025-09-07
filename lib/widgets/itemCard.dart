@@ -45,7 +45,7 @@ class ItemCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          item.description,
+                          item.category?.name ?? 'بدون دسته بندی',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade600,

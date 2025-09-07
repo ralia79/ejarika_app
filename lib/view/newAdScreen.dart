@@ -93,7 +93,7 @@ class _NewAdScreenState extends State<NewAdScreen> {
                 "price": int.tryParse(_price ?? "0"),
                 "user": user,
                 "category": _category,
-                "city": selectedCityId
+                "city": {'id' : selectedCityId}
               }),
               contentType: MediaType("application", "json"),
             ),
