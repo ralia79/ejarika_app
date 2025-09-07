@@ -103,8 +103,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     });
 
     try {
-      var response = await adService.confirmLogin(_phone ?? "", otp);
-      print(response);
+      var jwtToken = await adService.confirmLogin(_phone ?? "", otp);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', jwtToken);
+      print(jwtToken);
       Navigator.pushNamed(context, '/');
     } catch (e) {
       _showSnackbar(context, "خطایی رخ داده است لطفا دوباره تلاش کنید");

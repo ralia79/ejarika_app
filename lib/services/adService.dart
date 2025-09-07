@@ -33,7 +33,7 @@ class AdService {
     }
   }
 
-  Future<Object> confirmLogin(String phone, String code) async {
+  Future<String> confirmLogin(String phone, String code) async {
     Map<String, dynamic> phoneObject = {"username": phone, "password": code};
     try {
       final response = await _apiClient.post(
@@ -42,7 +42,8 @@ class AdService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return response;
+        final decodedBody = json.decode(response.body);
+        return decodedBody['id_token'];
       } else {
         throw Exception(
             'Failed to login request - status code: ${response.statusCode}');
