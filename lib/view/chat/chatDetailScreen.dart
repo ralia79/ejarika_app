@@ -99,7 +99,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   Widget _buildMessage(Message msg) {
-    bool isMe = msg.user?.id == chat?.user?.id;
+    bool isMe = msg.user?.id == user?.id;
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
